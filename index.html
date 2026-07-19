@@ -110,6 +110,39 @@
             body.sidebar-open #sidebar { transform: translateX(0); }
             .brand-wrap span { display: none; }
         }
+        .typing {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 2px;
+}
+
+.typing span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: typingBounce 1.2s infinite ease-in-out;
+}
+
+.typing span:nth-child(2) {
+    animation-delay: .2s;
+}
+
+.typing span:nth-child(3) {
+    animation-delay: .4s;
+}
+
+@keyframes typingBounce {
+    0%, 80%, 100% {
+        transform: scale(0.5);
+        opacity: .35;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
     </style>
 </head>
 <body class="sidebar-closed" data-theme="light">
@@ -298,7 +331,7 @@
             const msgs = isPrivate ? [] : sessions.find(s => s.id === currentId).messages;
             msgs.push({ role: 'user', content: prompt });
 
-            let botDiv = addMessage("Analyzing...", 'assistant');
+            let botDiv = addMessage("", "assistant");  botDiv.innerHTML = ` <div class="typing">     <span></span>     <span></span>     <span></span> </div> `;
             let fullText = "";
 
             try {
@@ -317,7 +350,7 @@ if (!res.ok) {
 }
                 const reader = res.body.getReader();
                 const decoder = new TextDecoder();
-                botDiv.innerHTML = "";
+                fullText = ""; botDiv.innerHTML = "";
 
                 while(true) {
                     const { done, value } = await reader.read();
