@@ -11,25 +11,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        :root {
-            --bg: #ffffff;
-            --sidebar-bg: rgba(245, 245, 247, 0.85);
-            --ui-100: #f5f5f7;
-            --ui-200: #e8e8ed;
-            --accent: #000000;
-            --text: #000000;
+:root {
+    --bg: #000000;
+    --sidebar-bg: rgba(15,15,15,.9);
+    --ui-100: #1a1a1a;
+    --ui-200: #333333;
+    --accent: #ffffff;
+    --text: #ffffff;
+
             --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
             --sidebar-width: 300px;
         }
 
-        [data-theme="dark"] {
-            --bg: #000000;
-            --sidebar-bg: rgba(15, 15, 15, 0.9);
-            --ui-100: #1a1a1a;
-            --ui-200: #333333;
-            --accent: #ffffff;
-            --text: #ffffff;
-        }
+
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
 
@@ -145,7 +139,7 @@
 }
     </style>
 </head>
-<body class="sidebar-closed" data-theme="light">
+<body class="sidebar-closed" data-theme="dark">
 
     <div id="splash">
         <svg class="splash-logo" viewBox="0 0 150 150"><path fill="currentColor" d="M59.95,93.59l45.05-33.3c2.21-1.63,5.37-1,6.42,1.54 5.54,13.37,3.06,29.44-7.96,40.48-11.02,11.03-26.35,13.45-40.37,7.94l-15.31,7.1c21.96,15.03,48.63,11.31,65.29-5.38 13.22-13.23,17.31-31.27,13.48-47.54l.03,.03c-5.55-23.9,1.36-33.45,15.53-52.98.33-.46,.67-.93,1.01-1.4l-18.64,18.66v-.06L59.94,93.6"/><path fill="currentColor" d="M50.65,101.68c-15.76-15.07-13.04-38.4,.4-51.86 9.94-9.96,26.24-14.02,40.46-8.05l15.28-7.06c-2.75-1.99-6.28-4.13-10.33-5.64-18.29-7.54-40.2-3.79-55.07,11.09-14.3,14.32-18.8,36.34-11.08,55.13 5.77,14.04-3.69,23.98-13.22,34-3.38,3.55-6.76,7.11-9.49,10.87l43.03-38.48"/></svg>
@@ -173,10 +167,6 @@
             </div>
             <div style="display:flex; align-items:center; gap:5px;">
                 <button id="private-toggle-btn" class="private-btn" onclick="togglePrivate()">InPrivate Chat</button>
-                <button class="icon-btn" onclick="toggleTheme()" style="background:none; border:none; color:var(--text);">
-                    <svg id="moon-icon" class="icon-bold" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                    <svg id="sun-icon" class="icon-bold" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>
-                </button>
                 <button class="icon-btn" onclick="toggleSettings()" style="background:none; border:none; color:var(--text);"><svg class="icon-bold" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
             </div>
         </header>
@@ -236,28 +226,14 @@
             }, 3000);
         });
 
-        function toggleTheme() {
-            const b = document.body;
-            const isL = b.getAttribute('data-theme') === 'light';
-            b.setAttribute('data-theme', isL ? 'dark' : 'light');
-            document.getElementById('moon-icon').style.display = isL ? 'none' : 'block';
-            document.getElementById('sun-icon').style.display = isL ? 'block' : 'none';
-        }
-
         function togglePrivate() {
             isPrivate = !isPrivate;
             const btn = document.getElementById('private-toggle-btn');
             if(isPrivate) {
                 btn.textContent = "Public Chat";
-                document.body.setAttribute('data-theme', 'dark');
-                document.getElementById('moon-icon').style.display = 'none';
-                document.getElementById('sun-icon').style.display = 'block';
                 createNewChat();
             } else {
                 btn.textContent = "InPrivate Chat";
-                document.body.setAttribute('data-theme', 'light');
-                document.getElementById('moon-icon').style.display = 'block';
-                document.getElementById('sun-icon').style.display = 'none';
                 if(sessions.length > 0) loadSession(sessions[0].id);
             }
         }
