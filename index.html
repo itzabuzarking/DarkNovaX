@@ -12,6 +12,124 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <style>
+        body.dragging::before{
+
+content:"Drop files here";
+
+position:fixed;
+
+inset:0;
+
+background:rgba(0,0,0,.75);
+
+backdrop-filter:blur(15px);
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:32px;
+
+font-weight:700;
+
+z-index:999999;
+
+border:4px dashed #3f8cff;
+
+color:white;
+}
+        .typing-cursor{
+
+display:inline-block;
+
+width:8px;
+
+height:18px;
+
+background:white;
+
+margin-left:3px;
+
+animation:blink 1s infinite;
+}
+
+@keyframes blink{
+
+50%{
+
+opacity:0;
+}
+
+}
+        #welcome-screen{
+
+height:100%;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+text-align:center;
+
+gap:20px;
+
+animation:fadeIn .6s;
+}
+
+.welcome-logo{
+
+animation:float 4s infinite ease-in-out;
+}
+
+.welcome-grid{
+
+display:grid;
+
+grid-template-columns:repeat(2,170px);
+
+gap:18px;
+
+margin-top:20px;
+}
+
+.welcome-grid button{
+
+background:#181818;
+
+border:1px solid #2d2d2d;
+
+color:white;
+
+border-radius:20px;
+
+padding:25px;
+
+cursor:pointer;
+
+transition:.3s;
+}
+
+.welcome-grid button:hover{
+
+transform:translateY(-5px);
+
+background:#222;
+}
+
+@keyframes float{
+
+50%{
+
+transform:translateY(-10px);
+}
+
+}
         pre{
 
 background:#111;
@@ -323,7 +441,7 @@ max-width:100%;
             </div>
         </header>
 
-        <div id="chat-window"></div>
+        <div id="chat-window">  <div id="welcome-screen">  <div class="welcome-logo"> <svg width="70" height="70" viewBox="0 0 150 150"> <!-- Your DarkNovaX SVG --> </svg> </div>  <h1>DarkNovaX</h1>  <p>How can I help you today?</p>  <div class="welcome-grid">  <button onclick="fillPrompt('Write JavaScript code')"> 💻 <span>Write Code</span> </button>  <button onclick="fillPrompt('Summarize this file')"> 📄 <span>Analyze File</span> </button>  <button onclick="fillPrompt('Search the web')"> 🌍 <span>Search</span> </button>  <button onclick="fillPrompt('Generate an image')"> 🎨 <span>Create Image</span> </button>  </div>  </div>  </div>
 
         <div class="input-wrap">
             <div id="file-chip"></div>
@@ -361,6 +479,11 @@ max-width:100%;
     </div>
 
     <script>
+        function fillPrompt(text){
+
+document.getElementById("user-input").value=text;
+
+}
         const API_KEY = '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';
         const MODEL = 'openai/gpt-oss-20b:free';
 
@@ -443,7 +566,13 @@ max-width:100%;
 
             if(!isPrivate && !currentId) {
                 currentId = Date.now();
-                sessions.unshift({ id: currentId, title: text.substring(0,25) || "Session", messages: [] });
+                sessions.unshift({ id: currentId,title:
+text
+.replace(/[^\w\s]/g,"")
+.trim()
+.split(" ")
+.slice(0,4)
+.join(" ") || "New Chat", messages: [] });
             }
 
             let prompt = text;
@@ -508,7 +637,9 @@ if (!res.ok) {
                             try {
                                 const json = JSON.parse(data);
                                 fullText += json.choices[0].delta.content || "";
-                                botDiv.innerHTML = marked.parse(fullText);
+                                botDiv.innerHTML = marked.parse(fullText)+ '<span class="typing-cursor"></span>';
+                                botDiv.innerHTML=
+marked.parse(fullText);
                                 botDiv.querySelectorAll("pre code").forEach(el=>{
 hljs.highlightElement(el);
 });
@@ -552,12 +683,67 @@ hljs.highlightElement(el);
             save(); renderHistory();
             if(currentId === id) createNewChat();
         }
+        const welcome=document.getElementById("welcome-screen");
+
+if(welcome){
+
+welcome.remove();
+
+}
 
         function clearAll() { if(confirm("Wipe all system data?")) { localStorage.clear(); location.reload(); } }
         function onGoogle(r) { toggleSettings(); addMessage("Google Account Linked.", 'bot'); }
 
         document.getElementById('user-input').addEventListener('keypress', e => e.key === 'Enter' && handleSend());
         renderHistory();
+        document.addEventListener("dragover",e=>{
+
+e.preventDefault();
+
+document.body.classList.add("dragging");
+
+});
+
+document.addEventListener("dragleave",()=>{
+
+document.body.classList.remove("dragging");
+
+});
+
+document.addEventListener("drop",e=>{
+
+e.preventDefault();
+
+document.body.classList.remove("dragging");
+
+const file=e.dataTransfer.files[0];
+
+if(!file)return;
+
+const reader=new FileReader();
+
+reader.onload=x=>{
+
+fileObj={
+
+name:file.name,
+
+content:x.target.result
+
+};
+
+document.getElementById("file-chip").style.display="flex";
+
+document.getElementById("file-chip").innerHTML=
+
+`📄 ${file.name}`;
+
+};
+
+reader.readAsText(file);
+
+});
     </script>
+    
 </body>
 </html>
