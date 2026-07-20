@@ -1,454 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
-    <meta name="google-site-verification" content="Rp5jSsM8QE2fxkSecnqCFDJIBCyHqyjGw2uSVRA7HUc" />
     <meta name="msvalidate.01" content="61609FC026D32C52F2F19267A3767D1E" />
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DarkNovaX</title>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150'%3E%3Cpath fill='white' d='M59.95,93.59l45.05-33.3c2.21-1.63,5.37-1,6.42,1.54 5.54,13.37,3.06,29.44-7.96,40.48-11.02,11.03-26.35,13.45-40.37,7.94l-15.31,7.1c21.96,15.03,48.63,11.31,65.29-5.38 13.22-13.23,17.31-31.27,13.48-47.54l.03,.03c-5.55-23.9,1.36-33.45,15.53-52.98.33-.46,.67-.93,1.01-1.4l-18.64,18.66v-.06L59.94,93.6'/%3E%3Cpath fill='white' d='M50.65,101.68c-15.76-15.07-13.04-38.4,.4-51.86 9.94-9.96,26.24-14.02,40.46-8.05l15.28-7.06c-2.75-1.99-6.28-4.13-10.33-5.64-18.29-7.54-40.2-3.79-55.07,11.09-14.3,14.32-18.8,36.34-11.08,55.13 5.77,14.04-3.69,23.98-13.22,34-3.38,3.55-6.76,7.11-9.49,10.87l43.03-38.48'/%3E%3C/svg%3E">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
+    <!-- Original Highlight & Marked Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Original Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150'%3E%3Cpath fill='white' d='M59.95,93.59l45.05-33.3c2.21-1.63,5.37-1,6.42,1.54 5.54,13.37,3.06,29.44-7.96,40.48-11.02,11.03-26.35,13.45-40.37,7.94l-15.31,7.1c21.96,15.03,48.63,11.31,65.29-5.38 13.22-13.23,17.31-31.27,13.48-47.54l.03,.03c-5.55-23.9,1.36-33.45,15.53-52.98.33-.46,.67-.93,1.01-1.4l-18.64,18.66v-.06L59.94,93.6'/%3E%3Cpath fill='white' d='M50.65,101.68c-15.76-15.07-13.04-38.4,.4-51.86 9.94-9.96,26.24-14.02,40.46-8.05l15.28-7.06c-2.75-1.99-6.28-4.13-10.33-5.64-18.29-7.54-40.2-3.79-55.07,11.09-14.3,14.32-18.8,36.34-11.08,55.13 5.77,14.04-3.69,23.98-13.22,34-3.38,3.55-6.76,7.11-9.49,10.87l43.03-38.48'/%3E%3C/svg%3E">
+
     <style>
-        body.dragging::before{
-
-content:"Drop files here";
-
-position:fixed;
-
-inset:0;
-
-background:rgba(0,0,0,.75);
-
-backdrop-filter:blur(15px);
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-font-size:32px;
-
-font-weight:700;
-
-z-index:999999;
-
-border:4px dashed #3f8cff;
-
-color:white;
-}
-        .typing-cursor{
-
-display:inline-block;
-
-width:8px;
-
-height:18px;
-
-background:white;
-
-margin-left:3px;
-
-animation:blink 1s infinite;
-}
-
-@keyframes blink{
-
-50%{
-
-opacity:0;
-}
-
-}
-        #welcome-screen{
-
-height:100%;
-
-display:flex;
-
-flex-direction:column;
-
-justify-content:center;
-
-align-items:center;
-
-text-align:center;
-
-gap:20px;
-
-animation:fadeIn .6s;
-}
-
-.welcome-logo{
-
-animation:float 4s infinite ease-in-out;
-}
-
-.welcome-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-    gap:18px;
-    width:min(420px,95%);
-}
-
-.welcome-grid button{
-
-background:#181818;
-
-border:1px solid #2d2d2d;
-
-color:white;
-
-border-radius:20px;
-
-padding:25px;
-
-cursor:pointer;
-
-transition:.3s;
-}
-
-.welcome-grid button:hover{
-
-transform:translateY(-5px);
-
-background:#222;
-}
-
-@keyframes float{
-
-50%{
-
-transform:translateY(-10px);
-}
-
-}
-        pre{
-
-background:#111;
-
-border:1px solid #2d2d2d;
-
-padding:18px;
-
-border-radius:18px;
-
-overflow:auto;
-
-margin-top:10px;
-
-margin-bottom:10px;
-}
-
-code{
-
-font-family:JetBrains Mono,monospace;
-
-font-size:14px;
-}
-        
-:root {
-    --bg: #000000;
-    --sidebar-bg: rgba(15,15,15,.9);
-    --ui-100: #1a1a1a;
-    --ui-200: #333333;
-    --accent: #ffffff;
-    --text: #ffffff;
-
+        :root {
+            --bg: #000000;
+            --sidebar-bg: rgba(15, 15, 15, 0.95);
+            --ui-100: #1a1a1a;
+            --ui-200: #333333;
+            --accent: #ffffff;
+            --text: #ffffff;
             --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
             --sidebar-width: 300px;
         }
 
-
-
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
 
-        body { background: var(--bg); height: 100dvh; overflow: hidden; display: flex; color: var(--text); transition: background 0.5s var(--spring); }
+        body { background: var(--bg); height: 100dvh; overflow: hidden; display: flex; color: var(--text); }
 
-        /* --- SPLASH SCREEN --- */
-        #splash { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.8s; }
+        /* --- RESTORED OLD SPLASH SCREEN --- */
+        #splash { 
+            position: fixed; inset: 0; background: #000; z-index: 9999; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            transition: 0.8s; 
+        }
         .splash-logo { width: 100px; height: 100px; color: white; animation: logo-intro 2.5s var(--spring) infinite; }
-        @keyframes logo-intro { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 50% { transform: scale(1.1); opacity: 1; filter: blur(0); } 100% { transform: scale(1); filter: drop-shadow(0 0 15px white); } }
+        @keyframes logo-intro { 
+            0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 
+            50% { transform: scale(1.1); opacity: 1; filter: blur(0); } 
+            100% { transform: scale(1); filter: drop-shadow(0 0 15px white); } 
+        }
 
-        /* --- SIDEBAR --- */
+        /* --- RESTORED OLD SIDEBAR & TRANSPARENCY --- */
         #sidebar {
-            width: var(--sidebar-width); height: 100%; background: var(--sidebar-bg); backdrop-filter: blur(30px);
-            border-right: 1px solid var(--ui-200); display: flex; flex-direction: column; transition: transform 0.6s var(--spring); z-index: 1000;
+            width: var(--sidebar-width); height: 100%; background: var(--sidebar-bg); 
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-right: 1px solid var(--ui-200); display: flex; flex-direction: column; 
+            transition: transform 0.6s var(--spring); z-index: 1000;
         }
         body.sidebar-closed #sidebar { transform: translateX(-100%); position: absolute; }
         
         #history-list { flex: 1; overflow-y: auto; padding: 15px; }
         .history-item { 
-            padding: 14px; margin-bottom: 8px; background: var(--bg); border-radius: 14px; 
+            padding: 14px; margin-bottom: 8px; background: rgba(255,255,255,0.03); border-radius: 14px; 
             font-size: 0.85rem; border: 1px solid var(--ui-100); cursor: pointer;
             display: flex; justify-content: space-between; transition: 0.3s var(--spring);
         }
-        .history-item:hover { opacity: 0.8; transform: translateX(5px); }
+        .history-item:hover { background: rgba(255,255,255,0.08); transform: translateX(5px); }
         .history-item.active { background: var(--accent); color: var(--bg); }
 
-        /* --- BUTTONS & HOVERS --- */
-        .icon-btn, .send-btn, .private-btn { transition: opacity 0.3s, transform 0.2s; cursor: pointer; }
-        .icon-btn:hover, .send-btn:hover { opacity: 0.7; transform: scale(1.05); }
-        .icon-bold { stroke-width: 3px !important; }
+        /* --- RESTORED OLD WELCOME SCREEN --- */
+        #welcome-screen {
+            height: 100%; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; text-align: center; gap: 20px; animation: fadeIn 0.6s;
+        }
+        .welcome-logo { animation: float 4s infinite ease-in-out; margin-bottom: 10px; }
+        @keyframes float { 50% { transform: translateY(-10px); } }
+        
+        .welcome-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 18px; width: min(450px, 95%);
+        }
+        .welcome-grid button {
+            background: #111; border: 1px solid #2d2d2d; color: white;
+            border-radius: 20px; padding: 25px; cursor: pointer; transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+        .welcome-grid button:hover { transform: translateY(-5px); background: #181818; border-color: #444; }
+        .welcome-grid svg { opacity: 0.8; }
 
-        /* --- HEADER --- */
-        header { height: 70px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--ui-100); }
-        .brand-wrap { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; }
+        /* --- CHAT AREA --- */
+        main { flex: 1; display: flex; flex-direction: column; position: relative; }
+        header { 
+            height: 70px; padding: 0 20px; display: flex; align-items: center; 
+            justify-content: space-between; border-bottom: 1px solid var(--ui-100);
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(20px);
+        }
+        #chat-window { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
 
-        /* --- PRIVATE BUTTON (Header) --- */
-        .private-btn { background: none; border: none; color: var(--accent); font-weight: 600; font-size: 0.9rem; padding: 10px; }
+        /* Messages */
+        .msg { 
+            max-width: 85%; padding: 16px 20px; border-radius: 22px; font-size: 0.95rem; 
+            line-height: 1.6; animation: msgSlide 0.5s var(--spring) forwards; 
+            backdrop-filter: blur(10px);
+        }
+        .msg-user { align-self: flex-end; background: var(--accent); color: var(--bg); border-bottom-right-radius: 4px; }
+        .msg-bot { align-self: flex-start; background: var(--ui-100); border-bottom-left-radius: 4px; border: 1px solid #2d2d2d; }
+        
+        @keyframes msgSlide { from { opacity: 0; transform: translateY(20px); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- SETTINGS OVERLAY --- */
+        /* Bold Text Restoration */
+        strong, b { font-weight: 800; color: #fff; }
+        .msg-user strong, .msg-user b { color: #000; }
+
+        /* --- RESTORED DOT ANIMATION --- */
+        .typing { display: flex; align-items: center; gap: 5px; padding: 8px 2px; }
+        .typing span { 
+            width: 7px; height: 7px; border-radius: 50%; background: currentColor; 
+            animation: typingBounce 1.2s infinite ease-in-out; 
+        }
+        .typing span:nth-child(2) { animation-delay: .2s; }
+        .typing span:nth-child(3) { animation-delay: .4s; }
+        @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0.5); opacity: .3; } 40% { transform: scale(1); opacity: 1; } }
+
+        /* --- INPUT --- */
+        .input-wrap { padding: 20px; background: var(--bg); }
+        .input-pill { 
+            max-width: 800px; margin: 0 auto; background: var(--ui-100); 
+            padding: 6px 6px 6px 18px; border-radius: 35px; display: flex; 
+            align-items: center; gap: 12px; border: 1px solid #2d2d2d;
+        }
+        #user-input { flex: 1; border: none; outline: none; background: transparent; color: var(--text); font-size: 1rem; padding: 10px 0; }
+        
+        .circle-btn { 
+            background: var(--accent); color: var(--bg); border: none; width: 44px; height: 44px; 
+            border-radius: 50%; display: grid; place-items: center; cursor: pointer; transition: 0.3s;
+        }
+        .circle-btn:hover { transform: scale(1.05); }
+
+        .icon-btn { background: none; border: none; color: var(--text); cursor: pointer; opacity: 0.7; transition: 0.2s; }
+        .icon-btn:hover { opacity: 1; }
+
+        /* --- SETTINGS --- */
         #settings-overlay {
-            position: fixed; inset: 0; background: rgba(var(--bg-rgb), 0.1); 
-            backdrop-filter: blur(70px); -webkit-backdrop-filter: blur(70px);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); 
+            backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px);
             z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; transition: 0.4s ease;
+            opacity: 0; transition: 0.4s;
         }
         #settings-overlay.active { display: flex; opacity: 1; }
         .settings-card { width: 90%; max-width: 450px; display: flex; flex-direction: column; gap: 15px; }
-        .setting-row { background: var(--ui-100); padding: 18px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; }
-        #close-settings { margin-top: 40px; font-size: 2.5rem; cursor: pointer; opacity: 0.6; }
+        .setting-row { background: var(--ui-100); padding: 18px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #2d2d2d; }
 
-        /* --- CHAT AREA --- */
-        #chat-window { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
-        .msg { max-width: 85%; padding: 16px 20px; border-radius: 22px; font-size: 0.95rem; line-height: 1.6; animation: msgSlide 0.5s var(--spring) forwards; }
-        .msg-user { align-self: flex-end; background: var(--accent); color: var(--bg); border-bottom-right-radius: 4px; }
-        .msg-bot { align-self: flex-start; background: var(--ui-100); border-bottom-left-radius: 4px; }
-        @keyframes msgSlide { from { opacity: 0; transform: translateY(20px); } }
+        /* Switches */
+        .switch { width: 50px; height: 26px; position: relative; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; inset: 0; background: #333; border-radius: 34px; cursor: pointer; transition: 0.4s; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background: white; transition: 0.4s; border-radius: 50%; }
+        input:checked + .slider { background: #fff; }
+        input:checked + .slider:before { transform: translateX(24px); background: #000; }
 
-        /* --- INPUT --- */
-        .input-wrap { padding: 20px; background: var(--bg); flex-shrink: 0; }
-        #file-chip{
-    display:none;
-    align-items:center;
-    gap:10px;
-    width:fit-content;
-    max-width:350px;
-
-    margin:0 auto 12px;
-    padding:12px 16px;
-
-    background:#1d1d1d;
-    border:1px solid #2f2f2f;
-
-    border-radius:18px;
-
-    color:white;
-    font-size:.9rem;
-    font-weight:600;
-
-    animation:fileAppear .35s ease;
-}
-
-#file-chip::before{
-    content:"📄";
-    font-size:18px;
-}
-
-@keyframes fileAppear{
-    from{
-        opacity:0;
-        transform:translateY(10px) scale(.95);
-    }
-    to{
-        opacity:1;
-        transform:none;
-    }
-}
-        .input-pill { 
-            max-width: 800px; margin: 0 auto; background: var(--ui-100); 
-            padding: 6px 6px 6px 18px; border-radius: 35px; display: flex; align-items: center; gap: 12px;
+        #file-chip {
+            display: none; background: #222; border: 1px solid #333; color: white;
+            padding: 8px 15px; border-radius: 15px; font-size: 0.85rem;
+            width: fit-content; margin: 0 auto 10px; animation: msgSlide 0.3s;
         }
-        #user-input { flex: 1; border: none; outline: none; background: transparent; color: var(--text); font-size: 1rem; padding: 10px 0; }
-        .circle-btn { background: var(--accent); color: var(--bg); border: none; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; }
 
-        /* Toggle Switches */
-.switch {
-    position: relative;
-    width: 52px;
-    height: 28px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    inset: 0;
-    cursor: pointer;
-    background: #2f2f2f;
-    border-radius: 999px;
-    transition: 0.3s;
-}
-
-.slider:before {
-    content: "";
-    position: absolute;
-    width: 22px;
-    height: 22px;
-    left: 3px;
-    top: 3px;
-    background: #ffffff;
-    border-radius: 50%;
-    transition: 0.3s;
-}
-
-input:checked + .slider {
-    background: #0A84FF;
-}
-
-input:checked + .slider:before {
-    transform: translateX(24px);
-}
+        pre { background: #000 !important; border: 1px solid #2d2d2d; padding: 18px; border-radius: 18px; overflow: auto; margin: 15px 0; }
+        code { font-family: 'JetBrains Mono', monospace; font-size: 14px; }
 
         @media (max-width: 768px) {
             #sidebar { position: fixed; left: 0; transform: translateX(-100%); width: 85%; }
             body.sidebar-open #sidebar { transform: translateX(0); }
             .brand-wrap span { display: none; }
         }
-        .typing {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 2px;
-}
-
-.typing span {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: currentColor;
-    animation: typingBounce 1.2s infinite ease-in-out;
-}
-
-.typing span:nth-child(2) {
-    animation-delay: .2s;
-}
-
-.typing span:nth-child(3) {
-    animation-delay: .4s;
-}
-
-@keyframes typingBounce {
-    0%, 80%, 100% {
-        transform: scale(0.5);
-        opacity: .35;
-    }
-    40% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-        .file-preview{
-
-display:flex;
-align-items:center;
-gap:10px;
-
-margin-bottom:10px;
-
-padding:12px 15px;
-
-background:#202020;
-
-border:1px solid #303030;
-
-border-radius:15px;
-
-font-weight:600;
-
-width:fit-content;
-
-max-width:100%;
-}
-        /* Modern Scrollbars */
-
-/* Chrome, Edge, Safari */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-    border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #3a3a3a;
-    border-radius: 999px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-    transition: background .25s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #6b6b6b;
-    background-clip: padding-box;
-}
-
-::-webkit-scrollbar-corner {
-    background: transparent;
-}
-
-/* Firefox */
-* {
-    scrollbar-width: thin;
-    scrollbar-color: #3a3a3a transparent;
-}
     </style>
 </head>
-<body class="sidebar-closed" data-theme="dark">
+<body class="sidebar-closed">
 
+    <!-- SPLASH SCREEN -->
     <div id="splash">
         <svg class="splash-logo" viewBox="0 0 150 150"><path fill="currentColor" d="M59.95,93.59l45.05-33.3c2.21-1.63,5.37-1,6.42,1.54 5.54,13.37,3.06,29.44-7.96,40.48-11.02,11.03-26.35,13.45-40.37,7.94l-15.31,7.1c21.96,15.03,48.63,11.31,65.29-5.38 13.22-13.23,17.31-31.27,13.48-47.54l.03,.03c-5.55-23.9,1.36-33.45,15.53-52.98.33-.46,.67-.93,1.01-1.4l-18.64,18.66v-.06L59.94,93.6"/><path fill="currentColor" d="M50.65,101.68c-15.76-15.07-13.04-38.4,.4-51.86 9.94-9.96,26.24-14.02,40.46-8.05l15.28-7.06c-2.75-1.99-6.28-4.13-10.33-5.64-18.29-7.54-40.2-3.79-55.07,11.09-14.3,14.32-18.8,36.34-11.08,55.13 5.77,14.04-3.69,23.98-13.22,34-3.38,3.55-6.76,7.11-9.49,10.87l43.03-38.48"/></svg>
-        <h2 style="color:white; margin-top:20px; font-weight:800;">DARKNOVAX</h2>
+        <h2 style="color:white; margin-top:20px; font-weight:800; letter-spacing: 3px;">DARKNOVAX</h2>
     </div>
 
     <!-- SIDEBAR -->
     <aside id="sidebar">
         <div style="padding:25px; display:flex; justify-content:space-between; align-items:center;">
             <span style="font-weight:800; font-size:1.2rem;">History</span>
-            <button class="icon-btn" onclick="toggleSidebar()" style="background:none; border:none; font-size:1.5rem; color:var(--text);">&times;</button>
+            <button class="icon-btn" onclick="toggleSidebar()" style="font-size:1.5rem;">✕</button>
         </div>
         <div style="padding: 0 20px 20px;">
-            <button class="send-btn" onclick="createNewChat()" style="width:100%; padding:14px; border-radius:14px; background:var(--accent); color:var(--bg); border:none; font-weight:800;">+ New Session</button>
+            <button onclick="createNewChat()" style="width:100%; padding:14px; border-radius:14px; background:var(--accent); color:var(--bg); border:none; font-weight:800; cursor:pointer;">+ New Session</button>
         </div>
         <div id="history-list"></div>
     </aside>
 
-    <main style="flex:1; display:flex; flex-direction:column;">
+    <main>
         <header>
-            <div class="brand-wrap">
-                <button class="icon-btn" onclick="toggleSidebar()" style="background:none; border:none; color:var(--text);"><svg class="icon-bold" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
-                <svg width="25" height="25" viewBox="0 0 150 150"><path fill="currentColor" d="M59.95,93.59l45.05-33.3c2.21-1.63,5.37-1,6.42,1.54 5.54,13.37,3.06,29.44-7.96,40.48-11.02,11.03-26.35,13.45-40.37,7.94l-15.31,7.1c21.96,15.03,48.63,11.31,65.29-5.38 13.22-13.23,17.31-31.27,13.48-47.54l.03,.03c-5.55-23.9,1.36-33.45,15.53-52.98.33-.46,.67-.93,1.01-1.4l-18.64,18.66v-.06L59.94,93.6"/><path fill="currentColor" d="M50.65,101.68c-15.76-15.07-13.04-38.4,.4-51.86 9.94-9.96,26.24-14.02,40.46-8.05l15.28-7.06c-2.75-1.99-6.28-4.13-10.33-5.64-18.29-7.54-40.2-3.79-55.07,11.09-14.3,14.32-18.8,36.34-11.08,55.13 5.77,14.04-3.69,23.98-13.22,34-3.38,3.55-6.76,7.11-9.49,10.87l43.03-38.48"/></svg>
-                <span>DARKNOVAX</span>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <button class="icon-btn" onclick="toggleSidebar()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <div style="display:flex; align-items:center; gap:10px; font-weight:800;">
+                    <svg width="25" height="25" viewBox="0 0 150 150"><path fill="currentColor" d="M59.95,93.59l45.05-33.3c2.21-1.63,5.37-1,6.42,1.54 5.54,13.37,3.06,29.44-7.96,40.48-11.02,11.03-26.35,13.45-40.37,7.94l-15.31,7.1c21.96,15.03,48.63,11.31,65.29-5.38 13.22-13.23,17.31-31.27,13.48-47.54l.03,.03c-5.55-23.9,1.36-33.45,15.53-52.98.33-.46,.67-.93,1.01-1.4l-18.64,18.66v-.06L59.94,93.6"/><path fill="currentColor" d="M50.65,101.68c-15.76-15.07-13.04-38.4,.4-51.86 9.94-9.96,26.24-14.02,40.46-8.05l15.28-7.06c-2.75-1.99-6.28-4.13-10.33-5.64-18.29-7.54-40.2-3.79-55.07,11.09-14.3,14.32-18.8,36.34-11.08,55.13 5.77,14.04-3.69,23.98-13.22,34-3.38,3.55-6.76,7.11-9.49,10.87l43.03-38.48"/></svg>
+                    <span>DARKNOVAX</span>
+                </div>
             </div>
-            <div style="display:flex; align-items:center; gap:5px;">
-                <button id="private-toggle-btn" class="private-btn" onclick="togglePrivate()">InPrivate Chat</button>
-                <button class="icon-btn" onclick="toggleSettings()" style="background:none; border:none; color:var(--text);"><svg class="icon-bold" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <button id="private-indicator" onclick="togglePrivate()" style="background:none; border:1px solid #444; color:white; padding:8px 15px; border-radius:20px; font-size:0.8rem; cursor:pointer; font-weight:600;">InPrivate Chat</button>
+                <button class="icon-btn" onclick="toggleSettings()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
             </div>
         </header>
 
-        <div id="chat-window">  <div id="welcome-screen">  <div class="welcome-logo"> <svg width="70" height="70" viewBox="0 0 150 150"> <!-- Your DarkNovaX SVG --> </svg> </div>  <h1>DarkNovaX</h1>  <p>How can I help you today?</p>  <div class="welcome-grid">  <button onclick="fillPrompt('Write JavaScript code')"> 💻 <span>Write Code</span> </button>  <button onclick="fillPrompt('Summarize this file')"> 📄 <span>Analyze File</span> </button>  <button onclick="fillPrompt('Search the web')"> 🌍 <span>Search</span> </button>  <button onclick="fillPrompt('Generate an image')"> 🎨 <span>Create Image</span> </button>  </div>  </div>  </div>
+        <div id="chat-window">
+            <!-- RESTORED OLD WELCOME SCREEN -->
+            <div id="welcome-screen">
+                <div class="welcome-logo">
+                    <svg width="80" height="80" viewBox="0 0 150 150"><path fill="white" d="M59.95,93.59l45.05-33.3c2.21-1.63,5.37-1,6.42,1.54 5.54,13.37,3.06,29.44-7.96,40.48-11.02,11.03-26.35,13.45-40.37,7.94l-15.31,7.1c21.96,15.03,48.63,11.31,65.29-5.38 13.22-13.23,17.31-31.27,13.48-47.54l.03,.03c-5.55-23.9,1.36-33.45,15.53-52.98.33-.46,.67-.93,1.01-1.4l-18.64,18.66v-.06L59.94,93.6"/><path fill="white" d="M50.65,101.68c-15.76-15.07-13.04-38.4,.4-51.86 9.94-9.96,26.24-14.02,40.46-8.05l15.28-7.06c-2.75-1.99-6.28-4.13-10.33-5.64-18.29-7.54-40.2-3.79-55.07,11.09-14.3,14.32-18.8,36.34-11.08,55.13 5.77,14.04-3.69,23.98-13.22,34-3.38,3.55-6.76,7.11-9.49,10.87l43.03-38.48"/></svg>
+                </div>
+                <h1 style="font-weight:800; font-size:2.2rem;">DarkNovaX</h1>
+                <p style="opacity: 0.6; font-size: 1.1rem;">How can I help you today?</p>
+                <div class="welcome-grid">
+                    <button onclick="fillPrompt('Write JavaScript code for a countdown timer')">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        <span>Write Code</span>
+                    </button>
+                    <button onclick="fillPrompt('Summarize the contents of this file')">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        <span>Analyze File</span>
+                    </button>
+                    <button onclick="fillPrompt('Research current global space news')">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        <span>Search</span>
+                    </button>
+                    <button onclick="fillPrompt('Create a prompt for a realistic mountain landscape')">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <span>Create Image</span>
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <div class="input-wrap">
             <div id="file-chip"></div>
             <div class="input-pill">
                 <input type="file" id="file-hidden" style="display:none" onchange="handleFile(event)">
-                <button class="icon-btn" onclick="document.getElementById('file-hidden').click()" style="background:none; border:none; color:var(--text);"><svg class="icon-bold" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg></button>
-                <button class="icon-btn" onclick="handleMic()" style="background:none; border:none; color:var(--text);"><svg class="icon-bold" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg></button>
+                <button class="icon-btn" onclick="document.getElementById('file-hidden').click()">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                </button>
+                <!-- RESTORED MIC -->
+                <button class="icon-btn" id="mic-trigger" onclick="handleMic()">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                </button>
                 <input type="text" id="user-input" placeholder="Message DarkNovaX..." autocomplete="off">
-                <button class="circle-btn send-btn" onclick="handleSend()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button>
+                <button class="circle-btn" onclick="handleSend()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
             </div>
         </div>
     </main>
@@ -456,36 +260,34 @@ max-width:100%;
     <!-- SETTINGS -->
     <div id="settings-overlay">
         <div class="settings-card">
-            <h1 style="font-weight:800; font-size:2.2rem; text-align:center; margin-bottom:10px;">Settings</h1>
-            <div id="g_id_onload" data-client_id="564604785993-0198dqq5n0q6fb1anvm3jcmum2tgd1jj.apps.googleusercontent.com" data-callback="onGoogle"></div>
+            <h1 style="font-weight:800; font-size:2rem; text-align:center; margin-bottom:10px;">Settings</h1>
+            <div id="g_id_onload" data-client_id="YOUR_GOOGLE_ID" data-callback="onGoogle"></div>
             <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_black" data-text="continue_with" data-size="large" data-width="100%"></div>
             
             <div class="setting-row">
                 <span>Accent Color</span>
-                <div style="display:flex; gap:8px;">
-                    <div onclick="setAccent('#000000')" style="width:25px; height:25px; background:#000; border-radius:50%; cursor:pointer; border:2px solid #fff;"></div>
+                <div style="display:flex; gap:10px;">
+                    <div onclick="setAccent('#ffffff')" style="width:25px; height:25px; background:#fff; border-radius:50%; cursor:pointer; border:2px solid #555;"></div>
                     <div onclick="setAccent('#007aff')" style="width:25px; height:25px; background:#007aff; border-radius:50%; cursor:pointer;"></div>
                     <div onclick="setAccent('#ff2d55')" style="width:25px; height:25px; background:#ff2d55; border-radius:50%; cursor:pointer;"></div>
                 </div>
             </div>
-            <div class="setting-row"><span>Auto-Scroll</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-            <div class="setting-row"><span>Haptic Feedback</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+            <div class="setting-row"><span>Auto-Scroll</span><label class="switch"><input type="checkbox" id="sett-scroll" checked><span class="slider"></span></label></div>
             <div class="setting-row"><span>System Speed</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
             <button onclick="clearAll()" style="padding:16px; border-radius:18px; background:#ff3b30; color:white; border:none; font-weight:800; cursor:pointer;">Clear All Memory</button>
+            <button onclick="toggleSettings()" style="padding:16px; border-radius:18px; background:#333; color:white; border:none; font-weight:800; cursor:pointer;">Close</button>
         </div>
-        <div id="close-settings" onclick="toggleSettings()">&times;</div>
     </div>
 
     <script>
-        function fillPrompt(text){
-
-document.getElementById("user-input").value=text;
-
-}
+        /**
+         * DarkNovaX CORE v5.1
+         * Strict no-emoji policy + restored legacy assets
+         */
         const API_KEY = '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';
         const MODEL = 'openai/gpt-oss-20b:free';
 
-        let sessions = JSON.parse(localStorage.getItem('nova_final_v1') || '[]');
+        let sessions = JSON.parse(localStorage.getItem('nova_legacy_v5') || '[]');
         let currentId = null;
         let isPrivate = false;
         let fileObj = null;
@@ -499,61 +301,70 @@ document.getElementById("user-input").value=text;
             }, 3000);
         });
 
-        function togglePrivate() {
-            isPrivate = !isPrivate;
-            const btn = document.getElementById('private-toggle-btn');
-            if(isPrivate) {
-                btn.textContent = "Public Chat";
-                createNewChat();
-            } else {
-                btn.textContent = "InPrivate Chat";
-                if(sessions.length > 0) loadSession(sessions[0].id);
-            }
-        }
-
-        function handleMic() {
-            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = 'en-US';
-            recognition.start();
-            document.getElementById('user-input').placeholder = "Listening...";
-            recognition.onresult = (event) => {
-                document.getElementById('user-input').value = event.results[0][0].transcript;
-                document.getElementById('user-input').placeholder = "Message DarkNovaX...";
-            };
-        }
-
-        function toggleSettings() {
-            document.getElementById('settings-overlay').classList.toggle('active');
-        }
-
-        function toggleSidebar() {
+        function toggleSidebar() { 
             document.body.classList.toggle('sidebar-open');
             if(window.innerWidth > 768) document.body.classList.toggle('sidebar-closed');
         }
 
-        function setAccent(color) {
-            document.documentElement.style.setProperty('--accent', color);
+        function toggleSettings() { 
+            document.getElementById('settings-overlay').classList.toggle('active'); 
         }
+
+        function togglePrivate() {
+            isPrivate = !isPrivate;
+            const btn = document.getElementById('private-indicator');
+            btn.textContent = isPrivate ? "Public Chat" : "InPrivate Chat";
+            btn.style.borderColor = isPrivate ? "#00ff00" : "#444";
+            if(isPrivate) createNewChat();
+        }
+
+        function setAccent(c) { document.documentElement.style.setProperty('--accent', c); }
+        function fillPrompt(t) { document.getElementById('user-input').value = t; }
 
         function handleFile(e) {
             const file = e.target.files[0];
+            if(!file) return;
             const reader = new FileReader();
             reader.onload = (ev) => {
                 fileObj = { name: file.name, content: ev.target.result };
                 const chip = document.getElementById('file-chip');
                 chip.style.display = 'block';
-                chip.textContent = `📄 ${file.name}`;
+                chip.textContent = `MOUNTED: ${file.name.toUpperCase()}`;
             };
             reader.readAsText(file);
         }
 
+        function handleMic() {
+            const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if(!Speech) return alert("System voice link not supported.");
+            const rec = new Speech();
+            const btn = document.getElementById('mic-trigger');
+            btn.style.color = "#ff2d55";
+            rec.start();
+            rec.onresult = (e) => {
+                document.getElementById('user-input').value = e.results[0][0].transcript;
+                btn.style.color = "white";
+            };
+            rec.onerror = () => { btn.style.color = "white"; };
+        }
+
         function addMessage(text, role) {
+            const welcome = document.getElementById('welcome-screen');
+            if(welcome) welcome.remove();
+
             const win = document.getElementById('chat-window');
             const div = document.createElement('div');
             div.className = `msg ${role === 'user' ? 'msg-user' : 'msg-bot'}`;
-            div.innerHTML = role === 'assistant' ? marked.parse(text) : text;
+            
+            if(role === 'assistant') {
+                div.innerHTML = marked.parse(text);
+                div.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+            } else {
+                div.textContent = text;
+            }
+            
             win.appendChild(div);
-            win.scrollTop = win.scrollHeight;
+            if(document.getElementById('sett-scroll').checked) win.scrollTop = win.scrollHeight;
             return div;
         }
 
@@ -564,109 +375,96 @@ document.getElementById("user-input").value=text;
 
             if(!isPrivate && !currentId) {
                 currentId = Date.now();
-                sessions.unshift({ id: currentId,title:
-text
-.replace(/[^\w\s]/g,"")
-.trim()
-.split(" ")
-.slice(0,4)
-.join(" ") || "New Chat", messages: [] });
+                sessions.unshift({ id: currentId, title: text.slice(0, 30) || "New Session", messages: [] });
             }
 
             let prompt = text;
             if(fileObj) {
-                prompt = `[File: ${fileObj.name}]\n${fileObj.content}\n\n${text}`;
+                prompt = `[FILE: ${fileObj.name}]\n${fileObj.content}\n\nUSER: ${text}`;
                 fileObj = null;
                 document.getElementById('file-chip').style.display = 'none';
             }
 
-            let display = "";
-
-if(fileObj){
-
-display += `
-<div class="file-preview">
-
-📄 ${fileObj.name}
-
-</div>
-`;
-
-}
-
-display += text;
-
-addMessage(display,"user");
+            addMessage(text, 'user');
             input.value = "";
 
             const msgs = isPrivate ? [] : sessions.find(s => s.id === currentId).messages;
             msgs.push({ role: 'user', content: prompt });
 
-            let botDiv = addMessage("", "assistant");  botDiv.innerHTML = ` <div class="typing">     <span></span>     <span></span>     <span></span> </div> `;
-            let fullText = "";
+            // RESTORED DOT ANIMATION
+            const botDiv = addMessage('', 'assistant');
+            botDiv.innerHTML = `<div class="typing"><span></span><span></span><span></span></div>`;
 
             try {
                 const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                     method: "POST",
-                    headers: { "Authorization": `Bearer ${API_KEY}`, "Content-Type": "application/json" },
+                    headers: { 
+                        "Authorization": `Bearer ${API_KEY}`, 
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": "https://darknovax.ai"
+                    },
                     body: JSON.stringify({ model: MODEL, messages: msgs, stream: true })
                 });
-                console.log(res.status);
 
-if (!res.ok) {
-    const error = await res.text();
-    console.log(error);
-    botDiv.textContent = error;
-    return;
-}
+                if(!res.ok) {
+                    const err = await res.json();
+                    botDiv.innerHTML = `<strong>LINK ERROR:</strong> ${err.error.message}`;
+                    return;
+                }
+
                 const reader = res.body.getReader();
                 const decoder = new TextDecoder();
-                fullText = ""; botDiv.innerHTML = "";
+                let fullText = "";
+                botDiv.innerHTML = ""; // Clear dots
 
                 while(true) {
                     const { done, value } = await reader.read();
                     if(done) break;
+                    
                     const chunk = decoder.decode(value);
                     const lines = chunk.split('\n');
+                    
                     for(const line of lines) {
                         if(line.startsWith('data: ')) {
-                            const data = line.slice(6);
+                            const data = line.slice(6).trim();
                             if(data === '[DONE]') continue;
                             try {
                                 const json = JSON.parse(data);
-                                fullText += json.choices[0].delta.content || "";
-                                botDiv.innerHTML = marked.parse(fullText)+ '<span class="typing-cursor"></span>';
-                                botDiv.innerHTML=
-marked.parse(fullText);
-                                botDiv.querySelectorAll("pre code").forEach(el => {
-    hljs.highlightElement(el);
-});
-                                botDiv.querySelectorAll("pre code").forEach(el=>{
-hljs.highlightElement(el);
-});
-                                document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
-                            } catch (e) {}
+                                const content = json.choices[0].delta.content || "";
+                                fullText += content;
+                                botDiv.innerHTML = marked.parse(fullText);
+                                if(content.includes('\n')) botDiv.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+                            } catch(e){}
                         }
                     }
+                    if(document.getElementById('sett-scroll').checked) document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
                 }
-                if(!isPrivate) { msgs.push({ role: 'assistant', content: fullText }); save(); renderHistory(); }
-            } catch (err) { botDiv.textContent = "Error: System link interrupted."; }
+
+                botDiv.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+
+                if(!isPrivate) {
+                    msgs.push({ role: 'assistant', content: fullText });
+                    save(); renderHistory();
+                }
+
+            } catch (err) {
+                botDiv.innerHTML = "<strong>CRITICAL ERROR:</strong> Neural link severed.";
+            }
         }
 
         function createNewChat() {
             currentId = null;
-            document.getElementById('chat-window').innerHTML = `<div class="msg msg-bot">DarkNovaX Session Initialized. ${isPrivate ? 'InPrivate mode active.' : ''}</div>`;
-            if(window.innerWidth < 768) toggleSidebar();
+            location.reload(); 
         }
 
-        function save() { localStorage.setItem('nova_final_v1', JSON.stringify(sessions)); }
+        function save() { localStorage.setItem('nova_legacy_v5', JSON.stringify(sessions)); }
 
         function renderHistory() {
             const list = document.getElementById('history-list');
             list.innerHTML = sessions.map(s => `
                 <div class="history-item ${s.id === currentId ? 'active' : ''}" onclick="loadSession(${s.id})">
-                    <span>${s.title}</span>
-                    <span onclick="event.stopPropagation(); deleteSess(${s.id})">&times;</span>
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; width:80%; font-weight:800;">${s.title.toUpperCase()}</span>
+                    <span onclick="event.stopPropagation(); deleteSess(${s.id})">✕</span>
                 </div>
             `).join('');
         }
@@ -677,6 +475,7 @@ hljs.highlightElement(el);
             document.getElementById('chat-window').innerHTML = "";
             s.messages.forEach(m => addMessage(m.content, m.role));
             renderHistory();
+            if(window.innerWidth < 768) toggleSidebar();
         }
 
         function deleteSess(id) {
@@ -684,67 +483,22 @@ hljs.highlightElement(el);
             save(); renderHistory();
             if(currentId === id) createNewChat();
         }
-        const welcome=document.getElementById("welcome-screen");
 
-if(welcome){
-
-welcome.remove();
-
-}
-
-        function clearAll() { if(confirm("Wipe all system data?")) { localStorage.clear(); location.reload(); } }
-        function onGoogle(r) { toggleSettings(); addMessage("Google Account Linked.", 'bot'); }
+        function clearAll() { if(confirm("Initiate total memory wipe?")) { localStorage.clear(); location.reload(); } }
+        function onGoogle(r) { toggleSettings(); addMessage("Identity Verified via Google Interface.", 'assistant'); }
 
         document.getElementById('user-input').addEventListener('keypress', e => e.key === 'Enter' && handleSend());
+        
+        // Drag-Drop Restoration
+        document.addEventListener('dragover', e => { e.preventDefault(); document.body.style.opacity = '0.7'; });
+        document.addEventListener('drop', e => {
+            e.preventDefault();
+            document.body.style.opacity = '1';
+            const file = e.dataTransfer.files[0];
+            if(file) handleFile({ target: { files: [file] } });
+        });
+
         renderHistory();
-        document.addEventListener("dragover",e=>{
-
-e.preventDefault();
-
-document.body.classList.add("dragging");
-
-});
-
-document.addEventListener("dragleave",()=>{
-
-document.body.classList.remove("dragging");
-
-});
-
-document.addEventListener("drop",e=>{
-
-e.preventDefault();
-
-document.body.classList.remove("dragging");
-
-const file=e.dataTransfer.files[0];
-
-if(!file)return;
-
-const reader=new FileReader();
-
-reader.onload=x=>{
-
-fileObj={
-
-name:file.name,
-
-content:x.target.result
-
-};
-
-document.getElementById("file-chip").style.display="flex";
-
-document.getElementById("file-chip").innerHTML=
-
-`📄 ${file.name}`;
-
-};
-
-reader.readAsText(file);
-
-});
     </script>
-    
 </body>
 </html>
