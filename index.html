@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
     <meta name="google-site-verification" content="Rp5jSsM8QE2fxkSecnqCFDJIBCyHqyjGw2uSVRA7HUc" />
     <meta name="msvalidate.01" content="61609FC026D32C52F2F19267A3767D1E" />
     <meta charset="UTF-8">
@@ -88,14 +90,10 @@ animation:float 4s infinite ease-in-out;
 }
 
 .welcome-grid{
-
-display:grid;
-
-grid-template-columns:repeat(2,170px);
-
-gap:18px;
-
-margin-top:20px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:18px;
+    width:min(420px,95%);
 }
 
 .welcome-grid button{
@@ -640,6 +638,9 @@ if (!res.ok) {
                                 botDiv.innerHTML = marked.parse(fullText)+ '<span class="typing-cursor"></span>';
                                 botDiv.innerHTML=
 marked.parse(fullText);
+                                botDiv.querySelectorAll("pre code").forEach(el => {
+    hljs.highlightElement(el);
+});
                                 botDiv.querySelectorAll("pre code").forEach(el=>{
 hljs.highlightElement(el);
 });
