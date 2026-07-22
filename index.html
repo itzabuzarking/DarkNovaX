@@ -290,6 +290,11 @@
     </div>
 
     <script>
+        let sessions = JSON.parse(localStorage.getItem('nova_legacy_v5') || '[]');
+        let currentId = null;
+        let isPrivate = false;
+        let fileObj = null;
+        let privateMsgs = []; // THIS MUST BE HERE
         /**
          * DarkNovaX CORE v5.1
          * Strict no-emoji policy + restored legacy assets
@@ -302,15 +307,14 @@
         let isPrivate = false;
         let fileObj = null;
 
-        // Splash handling
+        // Splash handling - Set to 1000ms for faster entry
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const s = document.getElementById('splash');
                 s.style.opacity = '0';
                 setTimeout(() => s.style.display = 'none', 800);
-            }, 3000);
+            }, 1000); 
         });
-
         function toggleSidebar() { 
             document.body.classList.toggle('sidebar-open');
             if(window.innerWidth > 768) document.body.classList.toggle('sidebar-closed');
@@ -403,13 +407,18 @@ function togglePrivate() {
             const text = input.value.trim();
             if(!text && !fileObj) return;
 
-            if(!isPrivate && !currentId) {
-                currentId = Date.now();
-                sessions.unshift({ id: currentId, title: text.slice(0, 30) || "New Session", messages: [] });
+            // 1. Define the prompt first
+            let prompt = text;
+            if(fileObj) {
+                prompt = `[FILE: ${fileObj.name}]\n${fileObj.content}\n\nUSER: ${text}`;
+                fileObj = null;
+                document.getElementById('file-chip').style.display = 'none';
             }
-            // Use private memory if private mode is on, else use history
+
+            // 2. Setup the message history
             let msgs;
             if (isPrivate) {
+                if (typeof privateMsgs === 'undefined') privateMsgs = []; 
                 msgs = privateMsgs;
             } else {
                 if (!currentId) {
@@ -419,22 +428,11 @@ function togglePrivate() {
                 msgs = sessions.find(s => s.id === currentId).messages;
             }
 
-            msgs.push({ role: 'user', content: prompt });
-
-            let prompt = text;
-            if(fileObj) {
-                prompt = `[FILE: ${fileObj.name}]\n${fileObj.content}\n\nUSER: ${text}`;
-                fileObj = null;
-                document.getElementById('file-chip').style.display = 'none';
-            }
-
+            // 3. Add to UI and history
             addMessage(text, 'user');
             input.value = "";
-
-            const msgs = isPrivate ? [] : sessions.find(s => s.id === currentId).messages;
             msgs.push({ role: 'user', content: prompt });
 
-            // RESTORED DOT ANIMATION
             const botDiv = addMessage('', 'assistant');
             botDiv.innerHTML = `<div class="typing"><span></span><span></span><span></span></div>`;
 
@@ -458,15 +456,13 @@ function togglePrivate() {
                 const reader = res.body.getReader();
                 const decoder = new TextDecoder();
                 let fullText = "";
-                botDiv.innerHTML = ""; // Clear dots
+                botDiv.innerHTML = "";
 
                 while(true) {
                     const { done, value } = await reader.read();
                     if(done) break;
-                    
                     const chunk = decoder.decode(value);
                     const lines = chunk.split('\n');
-                    
                     for(const line of lines) {
                         if(line.startsWith('data: ')) {
                             const data = line.slice(6).trim();
@@ -476,7 +472,6 @@ function togglePrivate() {
                                 const content = json.choices[0].delta.content || "";
                                 fullText += content;
                                 botDiv.innerHTML = marked.parse(fullText);
-                                if(content.includes('\n')) botDiv.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
                             } catch(e){}
                         }
                     }
@@ -484,20 +479,13 @@ function togglePrivate() {
                 }
 
                 botDiv.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
-
-if(!isPrivate) {
-                    msgs.push({ role: 'assistant', content: fullText });
-                    save(); renderHistory();
-                } else {
-                    // Save to private memory so AI remembers previous messages in this session
-                    msgs.push({ role: 'assistant', content: fullText });
-                }
+                msgs.push({ role: 'assistant', content: fullText });
+                if(!isPrivate) { save(); renderHistory(); }
 
             } catch (err) {
                 botDiv.innerHTML = "<strong>CRITICAL ERROR:</strong> Neural link severed.";
             }
         }
-
         function createNewChat() {
             currentId = null;
             location.reload(); 
