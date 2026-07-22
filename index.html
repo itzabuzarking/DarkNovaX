@@ -18,6 +18,16 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150'%3E%3Cpath fill='white' d='M59.95,93.59l45.05-33.3c2.21-1.63,5.37-1,6.42,1.54 5.54,13.37,3.06,29.44-7.96,40.48-11.02,11.03-26.35,13.45-40.37,7.94l-15.31,7.1c21.96,15.03,48.63,11.31,65.29-5.38 13.22-13.23,17.31-31.27,13.48-47.54l.03,.03c-5.55-23.9,1.36-33.45,15.53-52.98.33-.46,.67-.93,1.01-1.4l-18.64,18.66v-.06L59.94,93.6'/%3E%3Cpath fill='white' d='M50.65,101.68c-15.76-15.07-13.04-38.4,.4-51.86 9.94-9.96,26.24-14.02,40.46-8.05l15.28-7.06c-2.75-1.99-6.28-4.13-10.33-5.64-18.29-7.54-40.2-3.79-55.07,11.09-14.3,14.32-18.8,36.34-11.08,55.13 5.77,14.04-3.69,23.98-13.22,34-3.38,3.55-6.76,7.11-9.49,10.87l43.03-38.48'/%3E%3C/svg%3E">
 
     <style>
+        /* Hides scrollbar for Chrome, Safari and Opera */
+*::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hides scrollbar for IE, Edge and Firefox */
+* {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
         :root {
             --bg: #000000;
             --sidebar-bg: rgba(15, 15, 15, 0.95);
@@ -285,7 +295,7 @@
          * Strict no-emoji policy + restored legacy assets
          */
         const API_KEY = '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';
-        const MODEL = 'qwen/qwen3.6-plus-preview:free';
+        const MODEL = 'openai/gpt-oss-20b:free';
 
         let sessions = JSON.parse(localStorage.getItem('nova_legacy_v5') || '[]');
         let currentId = null;
@@ -306,16 +316,36 @@
             if(window.innerWidth > 768) document.body.classList.toggle('sidebar-closed');
         }
 
-        function toggleSettings() { 
-            document.getElementById('settings-overlay').classList.toggle('active'); 
+    function toggleSettings() { 
+            const overlay = document.getElementById('settings-overlay');
+            overlay.classList.toggle('active'); 
+
+            // Force Google to render when the settings open
+            if(overlay.classList.contains('active')) {
+                try {
+                    google.accounts.id.renderButton(
+                        document.querySelector(".g_id_signin"),
+                        { theme: "filled_black", size: "large", width: "320" }
+                    );
+                } catch(e) {}
+            }
         }
 
-        function togglePrivate() {
+function togglePrivate() {
             isPrivate = !isPrivate;
             const btn = document.getElementById('private-indicator');
-            btn.textContent = isPrivate ? "Public Chat" : "InPrivate Chat";
-            btn.style.borderColor = isPrivate ? "#00ff00" : "#444";
-            if(isPrivate) createNewChat();
+            
+            // UI Updates
+            btn.textContent = isPrivate ? "Exit Private" : "InPrivate Chat";
+            btn.style.borderColor = isPrivate ? "#ff2d55" : "#444";
+            btn.style.color = isPrivate ? "#ff2d55" : "white";
+
+            // Clear state for privacy
+            document.getElementById('chat-window').innerHTML = "";
+            privateMsgs = []; 
+            currentId = null;
+            
+            addMessage(isPrivate ? "InPrivate Mode Active. Conversation is not saved." : "Private Mode Disabled.", 'assistant');
         }
 
         function setAccent(c) { document.documentElement.style.setProperty('--accent', c); }
@@ -377,6 +407,19 @@
                 currentId = Date.now();
                 sessions.unshift({ id: currentId, title: text.slice(0, 30) || "New Session", messages: [] });
             }
+            // Use private memory if private mode is on, else use history
+            let msgs;
+            if (isPrivate) {
+                msgs = privateMsgs;
+            } else {
+                if (!currentId) {
+                    currentId = Date.now();
+                    sessions.unshift({ id: currentId, title: text.slice(0, 30) || "New Session", messages: [] });
+                }
+                msgs = sessions.find(s => s.id === currentId).messages;
+            }
+
+            msgs.push({ role: 'user', content: prompt });
 
             let prompt = text;
             if(fileObj) {
@@ -442,9 +485,12 @@
 
                 botDiv.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
 
-                if(!isPrivate) {
+if(!isPrivate) {
                     msgs.push({ role: 'assistant', content: fullText });
                     save(); renderHistory();
+                } else {
+                    // Save to private memory so AI remembers previous messages in this session
+                    msgs.push({ role: 'assistant', content: fullText });
                 }
 
             } catch (err) {
