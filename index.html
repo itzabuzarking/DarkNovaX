@@ -272,7 +272,23 @@
         <div class="settings-card">
             <h1 style="font-weight:800; font-size:2rem; text-align:center; margin-bottom:10px;">Settings</h1>
             <div id="g_id_onload" data-client_id="564604785993-0198dqq5n0q6fb1anvm3jcmum2tgd1jj.apps.googleusercontent.com" data-callback="onGoogle"></div>
-            <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_black" data-text="continue_with" data-size="large" data-width="100%"></div>
+            <div id="google-profile" style="display:none;text-align:center;margin-bottom:15px;">
+    <img id="google-avatar" width="60" height="60" style="border-radius:50%;margin-bottom:10px;">
+    <h3 id="google-name"></h3>
+    <button onclick="logoutGoogle()" style="margin-top:10px;padding:10px 18px;border:none;border-radius:12px;background:#ff3b30;color:white;cursor:pointer;">
+        Sign Out
+    </button>
+</div>
+
+<div id="google-login">
+    <div class="g_id_signin"
+         data-type="standard"
+         data-theme="filled_black"
+         data-size="large"
+         data-shape="pill"
+         data-text="continue_with">
+    </div>
+</div>
             
             <div class="setting-row">
                 <span>Accent Color</span>
@@ -314,6 +330,14 @@
             document.body.classList.toggle('sidebar-open');
             if(window.innerWidth > 768) document.body.classList.toggle('sidebar-closed');
         }
+        function logoutGoogle(){
+
+    localStorage.removeItem("nova_profile");
+
+    document.getElementById("google-profile").style.display="none";
+    document.getElementById("google-login").style.display="block";
+
+}
 
     function toggleSettings() { 
             const overlay = document.getElementById('settings-overlay');
@@ -514,7 +538,26 @@ function togglePrivate() {
         }
 
         function clearAll() { if(confirm("Initiate total memory wipe?")) { localStorage.clear(); location.reload(); } }
-        function onGoogle(r) { toggleSettings(); addMessage("Identity Verified via Google Interface.", 'assistant'); }
+        function onGoogle(response) {
+
+    const data = JSON.parse(atob(response.credential.split('.')[1]));
+
+    localStorage.setItem("nova_profile", JSON.stringify(data));
+
+    showProfile(data);
+
+    toggleSettings();
+
+    addMessage(`Welcome back, ${data.name}!`, "assistant");
+}
+        function showProfile(user){
+
+    document.getElementById("google-login").style.display="none";
+    document.getElementById("google-profile").style.display="block";
+
+    document.getElementById("google-avatar").src=user.picture;
+    document.getElementById("google-name").textContent=user.name;
+}
 
         document.getElementById('user-input').addEventListener('keypress', e => e.key === 'Enter' && handleSend());
         
@@ -528,6 +571,11 @@ function togglePrivate() {
         });
 
         renderHistory();
+        const saved = localStorage.getItem("nova_profile");
+
+if(saved){
+    showProfile(JSON.parse(saved));
+}
     </script>
 </body>
 </html>
