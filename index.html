@@ -302,11 +302,6 @@
         const API_KEY = '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';
         const MODEL = 'openai/gpt-oss-20b:free';
 
-        let sessions = JSON.parse(localStorage.getItem('nova_legacy_v5') || '[]');
-        let currentId = null;
-        let isPrivate = false;
-        let fileObj = null;
-
         // Splash handling - Set to 1000ms for faster entry
         window.addEventListener('load', () => {
             setTimeout(() => {
