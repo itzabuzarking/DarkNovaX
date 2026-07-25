@@ -2,187 +2,301 @@
 <html lang="en">
 <head>
     <meta name="msvalidate.01" content="61609FC026D32C52F2F19267A3767D1E" />
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DarkNovaX</title>
     
-    <!-- Original Highlight & Marked Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     
-    <!-- Original Favicon -->
+    <!-- SVG Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150'%3E%3Cpath fill='white' d='M59.95,93.59l45.05-33.3c2.21-1.63,5.37-1,6.42,1.54 5.54,13.37,3.06,29.44-7.96,40.48-11.02,11.03-26.35,13.45-40.37,7.94l-15.31,7.1c21.96,15.03,48.63,11.31,65.29-5.38 13.22-13.23,17.31-31.27,13.48-47.54l.03,.03c-5.55-23.9,1.36-33.45,15.53-52.98.33-.46,.67-.93,1.01-1.4l-18.64,18.66v-.06L59.94,93.6'/%3E%3Cpath fill='white' d='M50.65,101.68c-15.76-15.07-13.04-38.4,.4-51.86 9.94-9.96,26.24-14.02,40.46-8.05l15.28-7.06c-2.75-1.99-6.28-4.13-10.33-5.64-18.29-7.54-40.2-3.79-55.07,11.09-14.3,14.32-18.8,36.34-11.08,55.13 5.77,14.04-3.69,23.98-13.22,34-3.38,3.55-6.76,7.11-9.49,10.87l43.03-38.48'/%3E%3C/svg%3E">
 
     <style>
-        /* Hides scrollbar for Chrome, Safari and Opera */
-*::-webkit-scrollbar {
-    display: none;
-}
+        /* Hidden scrollbars */
+        *::-webkit-scrollbar { display: none; }
+        * { -ms-overflow-style: none; scrollbar-width: none; box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
 
-/* Hides scrollbar for IE, Edge and Firefox */
-* {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-}
         :root {
-            --bg: #000000;
-            --sidebar-bg: rgba(15, 15, 15, 0.95);
-            --ui-100: #1a1a1a;
-            --ui-200: #333333;
+            --bg-color1: #0a0a0f;
+            --bg-color2: #16102b;
+            --bg-color3: #0f172a;
+            --glass-bg: rgba(20, 20, 30, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             --accent: #ffffff;
             --text: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
             --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-            --sidebar-width: 300px;
+            --sidebar-width: 320px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { 
+            background: linear-gradient(-45deg, var(--bg-color1), var(--bg-color2), var(--bg-color3)); 
+            background-size: 400% 400%; 
+            animation: gradientBG 15s ease infinite;
+            height: 100dvh; overflow: hidden; display: flex; color: var(--text);
+        }
 
-        body { background: var(--bg); height: 100dvh; overflow: hidden; display: flex; color: var(--text); }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-        /* --- RESTORED OLD SPLASH SCREEN --- */
+        /* Abstract glowing orbs in background */
+        .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; z-index: -1; animation: floatOrb 20s infinite ease-in-out alternate; }
+        .orb-1 { width: 400px; height: 400px; background: #6366f1; top: -100px; left: -100px; }
+        .orb-2 { width: 500px; height: 500px; background: #ec4899; bottom: -200px; right: -100px; animation-delay: -5s; }
+        
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 50px) scale(1.2); }
+        }
+
+        /* Glassmorphism utility */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        /* SPLASH SCREEN - Now with Glassmorphism */
         #splash { 
-            position: fixed; inset: 0; background: #000; z-index: 9999; 
+            position: fixed; inset: 0; z-index: 9999; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            transition: 0.8s; 
+            transition: opacity 0.8s, visibility 0.8s; 
+            background: rgba(10, 10, 15, 0.4);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
         }
-        .splash-logo { width: 100px; height: 100px; color: white; animation: logo-intro 2.5s var(--spring) infinite; }
+        /* Adjusted splash logo animation to just be a quick fade-in/pop, no endless floating */
+        .splash-logo { width: 100px; height: 100px; color: white; animation: logo-intro 1s var(--spring) forwards; opacity: 0; }
         @keyframes logo-intro { 
-            0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 
-            50% { transform: scale(1.1); opacity: 1; filter: blur(0); } 
-            100% { transform: scale(1); filter: drop-shadow(0 0 15px white); } 
+            0% { transform: scale(0.5); opacity: 0; filter: blur(10px); } 
+            100% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 15px white); } 
         }
 
-        /* --- RESTORED OLD SIDEBAR & TRANSPARENCY --- */
+        /* Skeleton Loader */
+        .skeleton-box {
+            width: 100%;
+            max-width: 350px;
+            aspect-ratio: 1 / 1;
+            background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.02) 75%);
+            background-size: 200% 100%;
+            animation: loadingSkeleton 1.5s infinite;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        @keyframes loadingSkeleton {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* SIDEBAR */
         #sidebar {
-            width: var(--sidebar-width); height: 100%; background: var(--sidebar-bg); 
-            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border-right: 1px solid var(--ui-200); display: flex; flex-direction: column; 
+            width: var(--sidebar-width); height: 100%; 
+            display: flex; flex-direction: column; 
             transition: transform 0.6s var(--spring); z-index: 1000;
+            border-right: 1px solid var(--glass-border);
         }
         body.sidebar-closed #sidebar { transform: translateX(-100%); position: absolute; }
         
-        #history-list { flex: 1; overflow-y: auto; padding: 15px; }
+        .sidebar-header { padding: 25px; display: flex; justify-content: space-between; align-items: center; }
+        .search-bar {
+            margin: 0 20px 15px; padding: 12px 15px; border-radius: 12px;
+            background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            color: white; outline: none; font-size: 0.9rem;
+        }
+        .search-bar::placeholder { color: var(--text-muted); }
+
+        #history-list { flex: 1; overflow-y: auto; padding: 0 15px 15px; }
         .history-item { 
-            padding: 14px; margin-bottom: 8px; background: rgba(255,255,255,0.03); border-radius: 14px; 
-            font-size: 0.85rem; border: 1px solid var(--ui-100); cursor: pointer;
-            display: flex; justify-content: space-between; transition: 0.3s var(--spring);
+            padding: 14px; margin-bottom: 8px; border-radius: 14px; 
+            font-size: 0.85rem; cursor: pointer; display: flex; justify-content: space-between; 
+            transition: all 0.3s var(--spring);
+            background: rgba(255,255,255,0.02); border: 1px solid transparent;
         }
-        .history-item:hover { background: rgba(255,255,255,0.08); transform: translateX(5px); }
-        .history-item.active { background: var(--accent); color: var(--bg); }
+        .history-item:hover { background: rgba(255,255,255,0.08); border-color: var(--glass-border); transform: translateX(5px); }
+        .history-item.active { background: rgba(255,255,255,0.15); border-color: var(--glass-border); color: #fff; font-weight: 600; }
+        .delete-btn { opacity: 0.5; transition: 0.2s; }
+        .delete-btn:hover { opacity: 1; color: #ff3b30; }
 
-        /* --- RESTORED OLD WELCOME SCREEN --- */
-        #welcome-screen {
-            height: 100%; display: flex; flex-direction: column; justify-content: center;
-            align-items: center; text-align: center; gap: 20px; animation: fadeIn 0.6s;
-        }
-        .welcome-logo { animation: float 4s infinite ease-in-out; margin-bottom: 10px; }
-        @keyframes float { 50% { transform: translateY(-10px); } }
-        
-        .welcome-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 18px; width: min(450px, 95%);
-        }
-        .welcome-grid button {
-            background: #111; border: 1px solid #2d2d2d; color: white;
-            border-radius: 20px; padding: 25px; cursor: pointer; transition: 0.3s;
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-        }
-        .welcome-grid button:hover { transform: translateY(-5px); background: #181818; border-color: #444; }
-        .welcome-grid svg { opacity: 0.8; }
-
-        /* --- CHAT AREA --- */
+        /* MAIN CHAT AREA */
         main { flex: 1; display: flex; flex-direction: column; position: relative; }
         header { 
             height: 70px; padding: 0 20px; display: flex; align-items: center; 
-            justify-content: space-between; border-bottom: 1px solid var(--ui-100);
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(20px);
+            justify-content: space-between; border-bottom: 1px solid var(--glass-border);
+            z-index: 10;
         }
-        #chat-window { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
+        
+        #chat-window { flex: 1; overflow-y: auto; padding: 30px; display: flex; flex-direction: column; gap: 25px; scroll-behavior: smooth; }
 
         /* Messages */
         .msg { 
-            max-width: 85%; padding: 16px 20px; border-radius: 22px; font-size: 0.95rem; 
-            line-height: 1.6; animation: msgSlide 0.5s var(--spring) forwards; 
-            backdrop-filter: blur(10px);
+            max-width: 85%; padding: 18px 24px; border-radius: 24px; font-size: 0.95rem; 
+            line-height: 1.6; animation: msgSlide 0.5s var(--spring) forwards; position: relative;
         }
-        .msg-user { align-self: flex-end; background: var(--accent); color: var(--bg); border-bottom-right-radius: 4px; }
-        .msg-bot { align-self: flex-start; background: var(--ui-100); border-bottom-left-radius: 4px; border: 1px solid #2d2d2d; }
+        .msg-user { 
+            align-self: flex-end; background: var(--accent); color: #000; 
+            border-bottom-right-radius: 6px; box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+        }
+        .msg-bot { 
+            align-self: flex-start; border-bottom-left-radius: 6px;
+        }
         
-        @keyframes msgSlide { from { opacity: 0; transform: translateY(20px); } }
+        .msg-actions {
+            position: absolute; bottom: -30px; left: 10px; display: flex; gap: 10px; opacity: 0; transition: opacity 0.3s;
+        }
+        .msg-bot:hover .msg-actions { opacity: 1; }
+        .action-icon {
+            background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);
+            padding: 5px; border-radius: 8px; cursor: pointer; color: white; display: grid; place-items: center;
+            transition: 0.2s; backdrop-filter: blur(5px);
+        }
+        .action-icon:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
+
+        @keyframes msgSlide { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Bold Text Restoration */
-        strong, b { font-weight: 800; color: #fff; }
-        .msg-user strong, .msg-user b { color: #000; }
-
-        /* --- RESTORED DOT ANIMATION --- */
-        .typing { display: flex; align-items: center; gap: 5px; padding: 8px 2px; }
-        .typing span { 
-            width: 7px; height: 7px; border-radius: 50%; background: currentColor; 
-            animation: typingBounce 1.2s infinite ease-in-out; 
+        /* Typography & Markdown */
+        strong, b { font-weight: 800; color: inherit; }
+        p { margin-bottom: 10px; }
+        p:last-child { margin-bottom: 0; }
+        
+        /* Universal styling for AI generated images */
+        .msg img {
+            width: 100%;
+            max-width: 350px;
+            aspect-ratio: 1 / 1;
+            object-fit: contain;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid var(--glass-border);
+            display: block;
+            background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.02) 75%);
+            background-size: 200% 100%;
+            animation: loadingSkeleton 1.5s infinite;
+            cursor: pointer;
+            color: transparent;
+            transition: transform 0.3s var(--spring), box-shadow 0.3s;
         }
+        .msg img:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(255,255,255,0.1); }
+
+        /* Lightbox */
+        #lightbox {
+            position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        #lightbox.active { display: flex; opacity: 1; }
+        #lightbox img { max-width: 90%; max-height: 85vh; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .lightbox-controls { position: absolute; top: 25px; right: 25px; display: flex; gap: 15px; }
+        .lightbox-btn { 
+            background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;
+            width: 45px; height: 45px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+            transition: 0.2s; backdrop-filter: blur(5px);
+        }
+        .lightbox-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.1); }
+
+        /* Code Blocks */
+        .code-wrapper { position: relative; margin: 15px 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--glass-border); }
+        .code-header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.6); padding: 8px 15px; font-size: 0.8rem; color: var(--text-muted);
+        }
+        .copy-btn {
+            background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.2s;
+        }
+        .copy-btn:hover { color: white; }
+        pre { background: rgba(0,0,0,0.4) !important; padding: 15px; margin: 0; overflow-x: auto; }
+        code { font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+
+        /* Loading Animation */
+        .typing { display: flex; align-items: center; gap: 6px; padding: 10px 5px; }
+        .typing span { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: typingBounce 1.4s infinite ease-in-out; }
         .typing span:nth-child(2) { animation-delay: .2s; }
         .typing span:nth-child(3) { animation-delay: .4s; }
-        @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0.5); opacity: .3; } 40% { transform: scale(1); opacity: 1; } }
+        @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0.6); opacity: .4; } 40% { transform: scale(1); opacity: 1; } }
 
-        /* --- INPUT --- */
-        .input-wrap { padding: 20px; background: var(--bg); }
+        /* INPUT AREA */
+        .input-wrap { padding: 20px; position: relative; z-index: 10; }
         .input-pill { 
-            max-width: 800px; margin: 0 auto; background: var(--ui-100); 
-            padding: 6px 6px 6px 18px; border-radius: 35px; display: flex; 
-            align-items: center; gap: 12px; border: 1px solid #2d2d2d;
+            max-width: 850px; margin: 0 auto; padding: 8px 8px 8px 20px; 
+            border-radius: 40px; display: flex; align-items: center; gap: 12px; 
         }
-        #user-input { flex: 1; border: none; outline: none; background: transparent; color: var(--text); font-size: 1rem; padding: 10px 0; }
+        #user-input { flex: 1; border: none; outline: none; background: transparent; color: var(--text); font-size: 1.05rem; padding: 12px 0; }
+        #user-input::placeholder { color: var(--text-muted); }
         
         .circle-btn { 
-            background: var(--accent); color: var(--bg); border: none; width: 44px; height: 44px; 
-            border-radius: 50%; display: grid; place-items: center; cursor: pointer; transition: 0.3s;
+            background: var(--accent); color: #000; border: none; width: 48px; height: 48px; 
+            border-radius: 50%; display: grid; place-items: center; cursor: pointer; transition: 0.3s var(--spring);
         }
-        .circle-btn:hover { transform: scale(1.05); }
+        .circle-btn:hover { transform: scale(1.08); box-shadow: 0 0 15px rgba(255,255,255,0.4); }
+        .icon-btn { background: none; border: none; color: var(--text); cursor: pointer; opacity: 0.6; transition: 0.2s; display: grid; place-items: center; padding: 8px; border-radius: 50%; }
+        .icon-btn:hover { opacity: 1; background: rgba(255,255,255,0.1); }
 
-        .icon-btn { background: none; border: none; color: var(--text); cursor: pointer; opacity: 0.7; transition: 0.2s; }
-        .icon-btn:hover { opacity: 1; }
+        #file-chip {
+            display: none; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white;
+            padding: 8px 18px; border-radius: 20px; font-size: 0.85rem; backdrop-filter: blur(10px);
+            width: fit-content; margin: 0 auto 15px; animation: msgSlide 0.3s;
+        }
 
-        /* --- SETTINGS --- */
+        /* SETTINGS MODAL */
         #settings-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.8); 
-            backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center;
             opacity: 0; transition: 0.4s;
         }
         #settings-overlay.active { display: flex; opacity: 1; }
-        .settings-card { width: 90%; max-width: 450px; display: flex; flex-direction: column; gap: 15px; }
-        .setting-row { background: var(--ui-100); padding: 18px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #2d2d2d; }
+        
+        .settings-card { 
+            width: 90%; max-width: 500px; padding: 30px; border-radius: 24px;
+            display: flex; flex-direction: column; gap: 18px; position: relative;
+        }
+        .setting-row { background: rgba(0,0,0,0.3); padding: 18px 20px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--glass-border); }
+        
+        select.glass-select {
+            background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white;
+            padding: 8px 12px; border-radius: 10px; outline: none; font-size: 0.9rem;
+        }
 
         /* Switches */
         .switch { width: 50px; height: 26px; position: relative; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; inset: 0; background: #333; border-radius: 34px; cursor: pointer; transition: 0.4s; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background: white; transition: 0.4s; border-radius: 50%; }
-        input:checked + .slider { background: #fff; }
+        .slider { position: absolute; inset: 0; background: rgba(255,255,255,0.1); border-radius: 34px; cursor: pointer; transition: 0.4s; border: 1px solid var(--glass-border); }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; transition: 0.4s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.5);}
+        input:checked + .slider { background: var(--accent); border-color: var(--accent); }
         input:checked + .slider:before { transform: translateX(24px); background: #000; }
 
-        #file-chip {
-            display: none; background: #222; border: 1px solid #333; color: white;
-            padding: 8px 15px; border-radius: 15px; font-size: 0.85rem;
-            width: fit-content; margin: 0 auto 10px; animation: msgSlide 0.3s;
-        }
-
-        pre { background: #000 !important; border: 1px solid #2d2d2d; padding: 18px; border-radius: 18px; overflow: auto; margin: 15px 0; }
-        code { font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+        .btn-primary { padding: 14px; border-radius: 14px; background: var(--accent); color: #000; border: none; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
+        .btn-danger { padding: 14px; border-radius: 14px; background: rgba(255, 59, 48, 0.2); color: #ff3b30; border: 1px solid rgba(255, 59, 48, 0.4); font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn-danger:hover { background: rgba(255, 59, 48, 0.4); }
 
         @media (max-width: 768px) {
             #sidebar { position: fixed; left: 0; transform: translateX(-100%); width: 85%; }
             body.sidebar-open #sidebar { transform: translateX(0); }
-            .brand-wrap span { display: none; }
+            .hide-mobile { display: none; }
         }
     </style>
 </head>
 <body class="sidebar-closed">
+
+    <!-- Ambient Background Orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
 
     <!-- SPLASH SCREEN -->
     <div id="splash">
@@ -191,58 +305,63 @@
     </div>
 
     <!-- SIDEBAR -->
-    <aside id="sidebar">
-        <div style="padding:25px; display:flex; justify-content:space-between; align-items:center;">
+    <aside id="sidebar" class="glass">
+        <div class="sidebar-header">
             <span style="font-weight:800; font-size:1.2rem;">History</span>
-            <button class="icon-btn" onclick="toggleSidebar()" style="font-size:1.5rem;">✕</button>
+            <button class="icon-btn" onclick="toggleSidebar()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
         </div>
-        <div style="padding: 0 20px 20px;">
-            <button onclick="createNewChat()" style="width:100%; padding:14px; border-radius:14px; background:var(--accent); color:var(--bg); border:none; font-weight:800; cursor:pointer;">+ New Session</button>
+        <input type="text" id="search-history" class="search-bar" placeholder="Search sessions..." onkeyup="filterHistory()">
+        <div style="padding: 0 20px 15px;">
+            <button onclick="createNewChat()" class="btn-primary" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                New Session
+            </button>
         </div>
         <div id="history-list"></div>
     </aside>
 
     <main>
-        <header>
+        <header class="glass">
             <div style="display:flex; align-items:center; gap:15px;">
                 <button class="icon-btn" onclick="toggleSidebar()">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
                 <div style="display:flex; align-items:center; gap:10px; font-weight:800;">
                     <svg width="25" height="25" viewBox="0 0 150 150"><path fill="currentColor" d="M59.95,93.59l45.05-33.3c2.21-1.63,5.37-1,6.42,1.54 5.54,13.37,3.06,29.44-7.96,40.48-11.02,11.03-26.35,13.45-40.37,7.94l-15.31,7.1c21.96,15.03,48.63,11.31,65.29-5.38 13.22-13.23,17.31-31.27,13.48-47.54l.03,.03c-5.55-23.9,1.36-33.45,15.53-52.98.33-.46,.67-.93,1.01-1.4l-18.64,18.66v-.06L59.94,93.6"/><path fill="currentColor" d="M50.65,101.68c-15.76-15.07-13.04-38.4,.4-51.86 9.94-9.96,26.24-14.02,40.46-8.05l15.28-7.06c-2.75-1.99-6.28-4.13-10.33-5.64-18.29-7.54-40.2-3.79-55.07,11.09-14.3,14.32-18.8,36.34-11.08,55.13 5.77,14.04-3.69,23.98-13.22,34-3.38,3.55-6.76,7.11-9.49,10.87l43.03-38.48"/></svg>
-                    <span>DARKNOVAX</span>
+                    <span class="hide-mobile">DARKNOVAX</span>
                 </div>
             </div>
-            <div style="display:flex; align-items:center; gap:15px;">
-                <button id="private-indicator" onclick="togglePrivate()" style="background:none; border:1px solid #444; color:white; padding:8px 15px; border-radius:20px; font-size:0.8rem; cursor:pointer; font-weight:600;">InPrivate Chat</button>
-                <button class="icon-btn" onclick="toggleSettings()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <button class="icon-btn hide-mobile" onclick="clearContext()" title="Clear Context (Keeps History)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                </button>
+                <button class="icon-btn hide-mobile" onclick="exportChat()" title="Export Chat">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                </button>
+                <button id="private-indicator" onclick="togglePrivate()" style="background:rgba(0,0,0,0.4); border:1px solid var(--glass-border); color:white; padding:8px 15px; border-radius:20px; font-size:0.8rem; cursor:pointer; font-weight:600; transition:0.3s; backdrop-filter:blur(5px);">InPrivate Chat</button>
+                <button class="icon-btn" onclick="toggleSettings()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </button>
             </div>
         </header>
 
         <div id="chat-window">
-            <!-- RESTORED OLD WELCOME SCREEN -->
-            <div id="welcome-screen">
+            <div id="welcome-screen" style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:20px; animation:fadeIn 0.6s;">
                 <div class="welcome-logo">
-                    <svg width="80" height="80" viewBox="0 0 150 150"><path fill="white" d="M59.95,93.59l45.05-33.3c2.21-1.63,5.37-1,6.42,1.54 5.54,13.37,3.06,29.44-7.96,40.48-11.02,11.03-26.35,13.45-40.37,7.94l-15.31,7.1c21.96,15.03,48.63,11.31,65.29-5.38 13.22-13.23,17.31-31.27,13.48-47.54l.03,.03c-5.55-23.9,1.36-33.45,15.53-52.98.33-.46,.67-.93,1.01-1.4l-18.64,18.66v-.06L59.94,93.6"/><path fill="white" d="M50.65,101.68c-15.76-15.07-13.04-38.4,.4-51.86 9.94-9.96,26.24-14.02,40.46-8.05l15.28-7.06c-2.75-1.99-6.28-4.13-10.33-5.64-18.29-7.54-40.2-3.79-55.07,11.09-14.3,14.32-18.8,36.34-11.08,55.13 5.77,14.04-3.69,23.98-13.22,34-3.38,3.55-6.76,7.11-9.49,10.87l43.03-38.48"/></svg>
+                    <svg width="90" height="90" viewBox="0 0 150 150"><path fill="white" d="M59.95,93.59l45.05-33.3c2.21-1.63,5.37-1,6.42,1.54 5.54,13.37,3.06,29.44-7.96,40.48-11.02,11.03-26.35,13.45-40.37,7.94l-15.31,7.1c21.96,15.03,48.63,11.31,65.29-5.38 13.22-13.23,17.31-31.27,13.48-47.54l.03,.03c-5.55-23.9,1.36-33.45,15.53-52.98.33-.46,.67-.93,1.01-1.4l-18.64,18.66v-.06L59.94,93.6"/><path fill="white" d="M50.65,101.68c-15.76-15.07-13.04-38.4,.4-51.86 9.94-9.96,26.24-14.02,40.46-8.05l15.28-7.06c-2.75-1.99-6.28-4.13-10.33-5.64-18.29-7.54-40.2-3.79-55.07,11.09-14.3,14.32-18.8,36.34-11.08,55.13 5.77,14.04-3.69,23.98-13.22,34-3.38,3.55-6.76,7.11-9.49,10.87l43.03-38.48"/></svg>
                 </div>
-                <h1 style="font-weight:800; font-size:2.2rem;">DarkNovaX</h1>
-                <p style="opacity: 0.6; font-size: 1.1rem;">How can I help you today?</p>
-                <div class="welcome-grid">
-                    <button onclick="fillPrompt('Write JavaScript code for a countdown timer')">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-                        <span>Write Code</span>
-                    </button>
-                    <button onclick="fillPrompt('Summarize the contents of this file')">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                        <span>Analyze File</span>
-                    </button>
-                    <button onclick="fillPrompt('Research current global space news')">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                        <span>Search</span>
-                    </button>
-                    <button onclick="fillPrompt('Create a prompt for a realistic mountain landscape')">
+                <h1 style="font-weight:800; font-size:2.5rem; letter-spacing: -1px;">DarkNovaX</h1>
+                <p style="opacity: 0.7; font-size: 1.1rem; max-width: 500px;">Experience the next evolution of glassmorphism. I can now generate images, search the web, and read responses aloud.</p>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:15px; width:min(500px, 100%); margin-top:10px;">
+                    <button class="glass" onclick="fillPrompt('Generate an image of a futuristic neon city')" style="padding:15px; border-radius:16px; color:white; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; transition:0.3s;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                        <span>Create Image</span>
+                        <span>Generate Image</span>
+                    </button>
+                    <button class="glass" onclick="fillPrompt('Search for the latest news on space exploration')" style="padding:15px; border-radius:16px; color:white; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; transition:0.3s;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        <span>Web Search</span>
                     </button>
                 </div>
             </div>
@@ -250,177 +369,361 @@
 
         <div class="input-wrap">
             <div id="file-chip"></div>
-            <div class="input-pill">
+            <div class="input-pill glass">
                 <input type="file" id="file-hidden" style="display:none" onchange="handleFile(event)">
-                <button class="icon-btn" onclick="document.getElementById('file-hidden').click()">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                <button class="icon-btn" onclick="document.getElementById('file-hidden').click()" title="Upload File">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
                 </button>
-                <!-- RESTORED MIC -->
-                <button class="icon-btn" id="mic-trigger" onclick="handleMic()">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                <button class="icon-btn" id="mic-trigger" onclick="handleMic()" title="Voice Input">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
                 </button>
-                <input type="text" id="user-input" placeholder="Message DarkNovaX..." autocomplete="off">
+                <input type="text" id="user-input" placeholder="Message DarkNovaX... (Try 'create image of a cat' or 'search ...')" autocomplete="off">
                 <button class="circle-btn" onclick="handleSend()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 </button>
             </div>
         </div>
     </main>
 
-    <!-- SETTINGS -->
+    <!-- SETTINGS MODAL -->
     <div id="settings-overlay">
-        <div class="settings-card">
-            <h1 style="font-weight:800; font-size:2rem; text-align:center; margin-bottom:10px;">Settings</h1>
+        <div class="settings-card glass" style="border: 1px solid rgba(255,255,255,0.2);">
+            <button class="icon-btn" onclick="toggleSettings()" style="position:absolute; top:20px; right:20px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            <h1 style="font-weight:800; font-size:1.8rem; margin-bottom:5px;">Settings</h1>
+            
             <div id="g_id_onload" data-client_id="564604785993-0198dqq5n0q6fb1anvm3jcmum2tgd1jj.apps.googleusercontent.com" data-callback="onGoogle"></div>
-            <div id="google-profile" style="display:none;text-align:center;margin-bottom:15px;">
-    <img id="google-avatar" width="60" height="60" style="border-radius:50%;margin-bottom:10px;">
-    <h3 id="google-name"></h3>
-    <button onclick="logoutGoogle()" style="margin-top:10px;padding:10px 18px;border:none;border-radius:12px;background:#ff3b30;color:white;cursor:pointer;">
-        Sign Out
-    </button>
-</div>
+            
+            <div id="google-profile" style="display:none; text-align:center; margin:10px 0; background:rgba(255,255,255,0.05); padding:15px; border-radius:16px;">
+                <img id="google-avatar" width="50" height="50" style="border-radius:50%; margin-bottom:10px; border:2px solid var(--accent);">
+                <h3 id="google-name" style="font-size:1rem;"></h3>
+                <button onclick="logoutGoogle()" class="btn-danger" style="margin-top:10px; padding:8px 15px; font-size:0.8rem;">Sign Out</button>
+            </div>
 
-<div id="google-login">
- <div id="googleSignIn"></div>
-</div>
+            <div id="google-login" style="display: flex; justify-content: center; margin: 10px 0;">
+                <div class="g_id_signin"></div>
+            </div>
+            
+            <div class="setting-row">
+                <span>AI Persona</span>
+                <select id="persona-select" class="glass-select" onchange="saveSettings()">
+                    <option value="default">Default Assistant</option>
+                    <option value="coder">Expert Coder</option>
+                    <option value="creative">Creative Writer</option>
+                </select>
+            </div>
             
             <div class="setting-row">
                 <span>Accent Color</span>
-                <div style="display:flex; gap:10px;">
-                    <div onclick="setAccent('#ffffff')" style="width:25px; height:25px; background:#fff; border-radius:50%; cursor:pointer; border:2px solid #555;"></div>
-                    <div onclick="setAccent('#007aff')" style="width:25px; height:25px; background:#007aff; border-radius:50%; cursor:pointer;"></div>
-                    <div onclick="setAccent('#ff2d55')" style="width:25px; height:25px; background:#ff2d55; border-radius:50%; cursor:pointer;"></div>
+                <div style="display:flex; gap:12px;">
+                    <div onclick="setAccent('#ffffff')" style="width:24px; height:24px; background:#fff; border-radius:50%; cursor:pointer; border:2px solid transparent;"></div>
+                    <div onclick="setAccent('#00e5ff')" style="width:24px; height:24px; background:#00e5ff; border-radius:50%; cursor:pointer;"></div>
+                    <div onclick="setAccent('#ff2d55')" style="width:24px; height:24px; background:#ff2d55; border-radius:50%; cursor:pointer;"></div>
+                    <div onclick="setAccent('#a855f7')" style="width:24px; height:24px; background:#a855f7; border-radius:50%; cursor:pointer;"></div>
                 </div>
             </div>
-            <div class="setting-row"><span>Auto-Scroll</span><label class="switch"><input type="checkbox" id="sett-scroll" checked><span class="slider"></span></label></div>
-            <div class="setting-row"><span>System Speed</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-            <button onclick="clearAll()" style="padding:16px; border-radius:18px; background:#ff3b30; color:white; border:none; font-weight:800; cursor:pointer;">Clear All Memory</button>
-            <button onclick="toggleSettings()" style="padding:16px; border-radius:18px; background:#333; color:white; border:none; font-weight:800; cursor:pointer;">Close</button>
+            <div class="setting-row"><span>Auto-Scroll</span><label class="switch"><input type="checkbox" id="sett-scroll" checked onchange="saveSettings()"><span class="slider"></span></label></div>
+            <button onclick="clearAll()" class="btn-danger" style="margin-top:10px;">Clear All Data & Memory</button>
         </div>
     </div>
 
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightbox">
+        <div class="lightbox-controls">
+            <button class="lightbox-btn" onclick="downloadLightboxImage()" title="Download Image">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </button>
+            <button class="lightbox-btn" onclick="closeLightbox()" title="Close">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <img id="lightbox-img" src="" alt="" style="color: transparent;">
+    </div>
+
     <script>
-        let sessions = JSON.parse(localStorage.getItem('nova_legacy_v5') || '[]');
+        // Core State
+        let sessions = JSON.parse(localStorage.getItem('nova_v6_sessions') || '[]');
+        let userSettings = JSON.parse(localStorage.getItem('nova_v6_settings') || '{"accent":"#ffffff", "scroll":true, "persona":"default"}');
         let currentId = null;
         let isPrivate = false;
         let fileObj = null;
-        let privateMsgs = []; // THIS MUST BE HERE
-        /**
-         * DarkNovaX CORE v5.1
-         * Strict no-emoji policy + restored legacy assets
-         */
+        let privateMsgs = []; 
+        let currentContext = []; // Active context sent to API
+
         const API_KEY = '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';
         const MODEL = 'openai/gpt-oss-20b:free';
 
-        // Splash handling - Set to 1000ms for faster entry
+        // Init App
         window.addEventListener('load', () => {
+            applySettings();
             setTimeout(() => {
                 const s = document.getElementById('splash');
                 s.style.opacity = '0';
-                setTimeout(() => s.style.display = 'none', 800);
-            }, 1000); 
+                s.style.visibility = 'hidden';
+            }, 1200); // slightly longer to enjoy the glass splash
+            renderHistory();
+            const savedUser = localStorage.getItem("nova_profile");
+            if(savedUser) showProfile(JSON.parse(savedUser));
+            
+            // Custom Markdown Renderer for Code Blocks (Adding Copy Button)
+            const renderer = new marked.Renderer();
+            renderer.image = function(href, title, text) {
+                return `<img src="${href}" alt="" onclick="openLightbox('${href}')">`;
+            };
+            renderer.code = function(code, language) {
+                const validLang = !!(language && hljs.getLanguage(language));
+                const highlighted = validLang ? hljs.highlight(code, { language }).value : escapeHtml(code);
+                return `
+                    <div class="code-wrapper">
+                        <div class="code-header">
+                            <span>${language || 'code'}</span>
+                            <button class="copy-btn" onclick="copyCode(this)" data-code="${escapeHtml(code)}">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                        <pre><code class="hljs ${language}">${highlighted}</code></pre>
+                    </div>`;
+            };
+            marked.setOptions({ renderer: renderer });
         });
+
+        // Lightbox Logic
+        function openLightbox(src) {
+            const lb = document.getElementById('lightbox');
+            document.getElementById('lightbox-img').src = src;
+            lb.style.display = 'flex';
+            setTimeout(() => lb.classList.add('active'), 10);
+        }
+        function closeLightbox() {
+            const lb = document.getElementById('lightbox');
+            lb.classList.remove('active');
+            setTimeout(() => lb.style.display = 'none', 300);
+        }
+        async function downloadLightboxImage() {
+            const src = document.getElementById('lightbox-img').src;
+            try {
+                const response = await fetch(src);
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'DarkNovaX_Image_' + Date.now() + '.png';
+                a.click();
+                URL.revokeObjectURL(url);
+            } catch (err) {
+                const a = document.createElement('a');
+                a.href = src;
+                a.download = 'DarkNovaX_Image.png';
+                a.target = '_blank';
+                a.click();
+            }
+        }
+        async function downloadLightboxImage2(src) {
+            try {
+                const response = await fetch(src);
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'DarkNovaX_Image_' + Date.now() + '.png';
+                a.click();
+                URL.revokeObjectURL(url);
+            } catch (err) {
+                window.open(src, '_blank');
+            }
+        }
+
+        // Utilities
+        function escapeHtml(unsafe) {
+            return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+        function copyCode(btn) {
+            const code = btn.getAttribute('data-code');
+            navigator.clipboard.writeText(code);
+            const span = btn.querySelector('span');
+            span.textContent = 'Copied!';
+            setTimeout(() => span.textContent = 'Copy', 2000);
+        }
+
         function toggleSidebar() { 
             document.body.classList.toggle('sidebar-open');
             if(window.innerWidth > 768) document.body.classList.toggle('sidebar-closed');
         }
-        function logoutGoogle(){
 
-    localStorage.removeItem("nova_profile");
-
-    document.getElementById("google-profile").style.display="none";
-    document.getElementById("google-login").style.display="block";
-
-}
-
-    function toggleSettings() { 
+        // Settings & Theme
+        function toggleSettings() { 
             const overlay = document.getElementById('settings-overlay');
             overlay.classList.toggle('active'); 
-
-            // Force Google to render when the settings open
             if(overlay.classList.contains('active')) {
                 try {
-                    google.accounts.id.renderButton(
-                        document.querySelector(".g_id_signin"),
-                        { theme: "filled_black", size: "large", width: "320" }
-                    );
+                    google.accounts.id.renderButton(document.querySelector(".g_id_signin"), { theme: "filled_black", size: "large", width: "100%" });
                 } catch(e) {}
             }
         }
+        function setAccent(c) { 
+            document.documentElement.style.setProperty('--accent', c); 
+            userSettings.accent = c;
+            saveSettings();
+        }
+        function applySettings() {
+            setAccent(userSettings.accent);
+            document.getElementById('sett-scroll').checked = userSettings.scroll;
+            document.getElementById('persona-select').value = userSettings.persona;
+        }
+        function saveSettings() {
+            userSettings.scroll = document.getElementById('sett-scroll').checked;
+            userSettings.persona = document.getElementById('persona-select').value;
+            localStorage.setItem('nova_v6_settings', JSON.stringify(userSettings));
+        }
 
-function togglePrivate() {
+        // Feature: Clear Context
+        function clearContext() {
+            currentContext = [];
+            addMessage("Context cleared. I am ready for a new topic.", 'assistant');
+        }
+
+        // Feature: Export Chat
+        function exportChat() {
+            if(!currentId || isPrivate) return alert("No active saved session to export.");
+            const s = sessions.find(x => x.id === currentId);
+            let content = `# Chat Export: ${s.title}\n\n`;
+            s.messages.forEach(m => content += `### ${m.role.toUpperCase()}:\n${m.content}\n\n`);
+            const blob = new Blob([content], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `DarkNovaX_${s.title.replace(/\\s/g,'_')}.md`;
+            a.click();
+        }
+
+        // Feature: Text to Speech
+        function speakText(btn, text) {
+            if(window.speechSynthesis.speaking) return window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // History & Search
+        function renderHistory(query = "") {
+            const list = document.getElementById('history-list');
+            const filtered = sessions.filter(s => s.title.toLowerCase().includes(query.toLowerCase()));
+            list.innerHTML = filtered.map(s => `
+                <div class="history-item ${s.id === currentId && !isPrivate ? 'active' : ''}" onclick="loadSession(${s.id})">
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; width:85%;">${s.title}</span>
+                    <button class="icon-btn delete-btn" onclick="event.stopPropagation(); deleteSess(${s.id})" style="padding:0; width:auto; height:auto;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+        function filterHistory() { renderHistory(document.getElementById('search-history').value); }
+        function save() { localStorage.setItem('nova_v6_sessions', JSON.stringify(sessions)); }
+        function createNewChat() { currentId = null; location.reload(); }
+        function loadSession(id) {
+            isPrivate = false;
+            document.getElementById('private-indicator').style.borderColor = "var(--glass-border)";
+            document.getElementById('private-indicator').style.color = "white";
+            
+            currentId = id;
+            const s = sessions.find(x => x.id === id);
+            currentContext = [...s.messages];
+            document.getElementById('chat-window').innerHTML = "";
+            s.messages.forEach(m => addMessage(m.content, m.role, false));
+            renderHistory();
+            if(window.innerWidth < 768) toggleSidebar();
+        }
+        function deleteSess(id) {
+            sessions = sessions.filter(s => s.id !== id);
+            save(); renderHistory();
+            if(currentId === id) createNewChat();
+        }
+        function clearAll() { if(confirm("Initiate total memory wipe?")) { localStorage.clear(); location.reload(); } }
+
+        // Privacy Mode
+        function togglePrivate() {
             isPrivate = !isPrivate;
             const btn = document.getElementById('private-indicator');
-            
-            // UI Updates
             btn.textContent = isPrivate ? "Exit Private" : "InPrivate Chat";
-            btn.style.borderColor = isPrivate ? "#ff2d55" : "#444";
-            btn.style.color = isPrivate ? "#ff2d55" : "white";
-
-            // Clear state for privacy
+            btn.style.borderColor = isPrivate ? "#ff3b30" : "var(--glass-border)";
+            btn.style.color = isPrivate ? "#ff3b30" : "white";
             document.getElementById('chat-window').innerHTML = "";
-            privateMsgs = []; 
-            currentId = null;
-            
+            privateMsgs = []; currentContext = []; currentId = null;
             addMessage(isPrivate ? "InPrivate Mode Active. Conversation is not saved." : "Private Mode Disabled.", 'assistant');
         }
 
-        function setAccent(c) { document.documentElement.style.setProperty('--accent', c); }
+        // UI Helpers
         function fillPrompt(t) { document.getElementById('user-input').value = t; }
-
-        function handleFile(e) {
-            const file = e.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                fileObj = { name: file.name, content: ev.target.result };
-                const chip = document.getElementById('file-chip');
-                chip.style.display = 'block';
-                chip.textContent = `MOUNTED: ${file.name.toUpperCase()}`;
-            };
-            reader.readAsText(file);
-        }
-
-        function handleMic() {
-            const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if(!Speech) return alert("System voice link not supported.");
-            const rec = new Speech();
-            const btn = document.getElementById('mic-trigger');
-            btn.style.color = "#ff2d55";
-            rec.start();
-            rec.onresult = (e) => {
-                document.getElementById('user-input').value = e.results[0][0].transcript;
-                btn.style.color = "white";
-            };
-            rec.onerror = () => { btn.style.color = "white"; };
-        }
-
-        function addMessage(text, role) {
+        
+        function addMessage(text, role, animate = true) {
             const welcome = document.getElementById('welcome-screen');
             if(welcome) welcome.remove();
 
             const win = document.getElementById('chat-window');
             const div = document.createElement('div');
-            div.className = `msg ${role === 'user' ? 'msg-user' : 'msg-bot'}`;
+            div.className = `msg glass ${role === 'user' ? 'msg-user' : 'msg-bot'}`;
+            if(!animate) div.style.animation = 'none';
             
             if(role === 'assistant') {
                 div.innerHTML = marked.parse(text);
-                div.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+                // Action Buttons for Bot
+                const actions = document.createElement('div');
+                actions.className = "msg-actions";
+                actions.innerHTML = `
+                    <div class="action-icon" title="Read Aloud" onclick="speakText(this, \`${text.replace(/`/g, "'").replace(/"/g, "&quot;")}\`)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                    </div>
+                    <div class="action-icon" title="Regenerate" onclick="regenerateLast()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
+                    </div>
+                `;
+                if(text) div.appendChild(actions);
             } else {
                 div.textContent = text;
             }
             
             win.appendChild(div);
-            if(document.getElementById('sett-scroll').checked) win.scrollTop = win.scrollHeight;
+            if(userSettings.scroll) win.scrollTop = win.scrollHeight;
             return div;
         }
 
+        function regenerateLast() {
+            if(currentContext.length < 2) return;
+            // Pop bot
+            if(currentContext[currentContext.length-1].role === 'assistant') currentContext.pop();
+            // Pop user
+            const lastUser = currentContext.pop();
+            
+            // Remove from DOM
+            const win = document.getElementById('chat-window');
+            if(win.children.length >= 2) {
+                win.removeChild(win.lastChild);
+                win.removeChild(win.lastChild);
+            }
+            
+            document.getElementById('user-input').value = lastUser.content;
+            handleSend();
+        }
+
+        // Web Search Tool
+        async function performSearch(query) {
+            try {
+                const res = await fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`);
+                const data = await res.json();
+                if(data.query && data.query.search.length > 0) {
+                    const top = data.query.search.slice(0,3);
+                    return "Here is what I found on the web:\n\n" + top.map(r => `**${r.title}**: ${r.snippet.replace(/<[^>]+>/g, '')}`).join('\n\n');
+                }
+                return "I searched the web but couldn't find a good summary.";
+            } catch(e) {
+                return "Web search failed temporarily.";
+            }
+        }
+
+        // Main Send Logic
         async function handleSend() {
             const input = document.getElementById('user-input');
             const text = input.value.trim();
             if(!text && !fileObj) return;
 
-            // 1. Define the prompt first
             let prompt = text;
             if(fileObj) {
                 prompt = `[FILE: ${fileObj.name}]\n${fileObj.content}\n\nUSER: ${text}`;
@@ -428,43 +731,117 @@ function togglePrivate() {
                 document.getElementById('file-chip').style.display = 'none';
             }
 
-            // 2. Setup the message history
-            let msgs;
-            if (isPrivate) {
-                if (typeof privateMsgs === 'undefined') privateMsgs = []; 
-                msgs = privateMsgs;
-            } else {
-                if (!currentId) {
-                    currentId = Date.now();
-                    sessions.unshift({ id: currentId, title: text.slice(0, 30) || "New Session", messages: [] });
-                }
-                msgs = sessions.find(s => s.id === currentId).messages;
+            // Initialization logic
+            if (!isPrivate && !currentId) {
+                currentId = Date.now();
+                sessions.unshift({ id: currentId, title: text.slice(0, 30) || "New Session", messages: [] });
+                // Add persona system prompt
+                let sysPrompt = "You are DarkNovaX, an advanced AI.";
+                if(userSettings.persona === "coder") sysPrompt = "You are an expert, 10x developer. Always provide clean, efficient code.";
+                if(userSettings.persona === "creative") sysPrompt = "You are a creative writer. Use expressive language, metaphors, and vibrant descriptions.";
+                currentContext = [{ role: 'system', content: sysPrompt }];
             }
 
-            // 3. Add to UI and history
             addMessage(text, 'user');
             input.value = "";
-            msgs.push({ role: 'user', content: prompt });
+            currentContext.push({ role: 'user', content: prompt });
+            
+            // Sync to storage arrays
+            let storageMsgs = isPrivate ? privateMsgs : sessions.find(s => s.id === currentId).messages;
+            storageMsgs.push({ role: 'user', content: prompt });
 
             const botDiv = addMessage('', 'assistant');
             botDiv.innerHTML = `<div class="typing"><span></span><span></span><span></span></div>`;
 
+            // Feature: Image Generation Interception
+            const lower = text.toLowerCase();
+            if((lower.includes("create") || lower.includes("generate")) && lower.includes("image")) {
+                const imgPrompt = encodeURIComponent(text);
+                const seed = Math.floor(Math.random() * 1000000);
+                const imgUrl = `https://image.pollinations.ai/prompt/${imgPrompt}?width=512&height=512&seed=${seed}`;
+                const imgId = `img-${seed}`;
+                const wrapperId = `wrap-${seed}`;
+
+                // Inject skeleton with img tag inside (display:none until loaded)
+                botDiv.innerHTML = `
+                    <p id="p-${seed}" style="margin-bottom:12px; opacity:0.7;">Generating your image...</p>
+                    <div id="${wrapperId}" class="skeleton-box" style="overflow:hidden;">
+                        <img id="${imgId}" src="${imgUrl}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:12px;color:transparent;cursor:pointer;display:none;">
+                    </div>
+                `;
+
+                // Wire up onload via JS (avoids broken inline attribute parsing)
+                const imgEl = document.getElementById(imgId);
+                const wrapEl = document.getElementById(wrapperId);
+                const paraEl = document.getElementById(`p-${seed}`);
+
+                if (imgEl) {
+                    imgEl.onload = function() {
+                        if (wrapEl) {
+                            wrapEl.style.background = 'none';
+                            wrapEl.style.animation = 'none';
+                            wrapEl.style.border = '1px solid rgba(255,255,255,0.08)';
+                        }
+                        imgEl.style.display = 'block';
+                        imgEl.onclick = () => openLightbox(imgEl.src);
+                        if (paraEl) paraEl.textContent = 'Here is your image:';
+                        if (userSettings.scroll) document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
+                    };
+                    imgEl.onerror = function() {
+                        // Retry without extra params — simplest fallback
+                        if (!imgEl.dataset.retried) {
+                            imgEl.dataset.retried = "1";
+                            imgEl.src = `https://image.pollinations.ai/prompt/${imgPrompt}`;
+                        } else {
+                            botDiv.innerHTML = `<p style="opacity:0.7;">Could not generate image. Check your internet connection and try again.</p>`;
+                        }
+                    };
+                }
+
+                // Action buttons below the skeleton
+                const actions = document.createElement('div');
+                actions.className = "msg-actions";
+                actions.innerHTML = `
+                    <div class="action-icon" title="Download" onclick="downloadLightboxImage2('${imgUrl}')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    </div>
+                    <div class="action-icon" title="Regenerate" onclick="regenerateLast()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
+                    </div>
+                `;
+                botDiv.appendChild(actions);
+                if (userSettings.scroll) document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
+
+                // Save text record to history
+                const historyContent = `[Image generated for: "${text}"]`;
+                currentContext.push({ role: 'assistant', content: historyContent });
+                storageMsgs.push({ role: 'assistant', content: historyContent });
+                if (!isPrivate) { save(); renderHistory(); }
+
+                return;
+            }
+
+
+            // Feature: Web Search Interception
+            if(lower.startsWith("search ") || lower.startsWith("lookup ")) {
+                const query = text.replace(/^(search|lookup)\s+/i, '');
+                const searchRes = await performSearch(query);
+                botDiv.innerHTML = marked.parse(searchRes);
+                currentContext.push({ role: 'assistant', content: searchRes });
+                storageMsgs.push({ role: 'assistant', content: searchRes });
+                if(!isPrivate) { save(); renderHistory(); }
+                return;
+            }
+
+            // Standard API Call
             try {
                 const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                     method: "POST",
-                    headers: { 
-                        "Authorization": `Bearer ${API_KEY}`, 
-                        "Content-Type": "application/json",
-                        "HTTP-Referer": "https://darknovax.ai"
-                    },
-                    body: JSON.stringify({ model: MODEL, messages: msgs, stream: true })
+                    headers: { "Authorization": `Bearer ${API_KEY}`, "Content-Type": "application/json", "HTTP-Referer": "https://darknovax.ai" },
+                    body: JSON.stringify({ model: MODEL, messages: currentContext, stream: true })
                 });
 
-                if(!res.ok) {
-                    const err = await res.json();
-                    botDiv.innerHTML = `<strong>LINK ERROR:</strong> ${err.error.message}`;
-                    return;
-                }
+                if(!res.ok) throw new Error((await res.json()).error.message || "API Error");
 
                 const reader = res.body.getReader();
                 const decoder = new TextDecoder();
@@ -474,102 +851,86 @@ function togglePrivate() {
                 while(true) {
                     const { done, value } = await reader.read();
                     if(done) break;
-                    const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n');
+                    const lines = decoder.decode(value).split('\n');
                     for(const line of lines) {
                         if(line.startsWith('data: ')) {
                             const data = line.slice(6).trim();
                             if(data === '[DONE]') continue;
                             try {
-                                const json = JSON.parse(data);
-                                const content = json.choices[0].delta.content || "";
-                                fullText += content;
+                                fullText += JSON.parse(data).choices[0].delta.content || "";
                                 botDiv.innerHTML = marked.parse(fullText);
                             } catch(e){}
                         }
                     }
-                    if(document.getElementById('sett-scroll').checked) document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
+                    if(userSettings.scroll) document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
                 }
 
-                botDiv.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
-                msgs.push({ role: 'assistant', content: fullText });
+                currentContext.push({ role: 'assistant', content: fullText });
+                storageMsgs.push({ role: 'assistant', content: fullText });
                 if(!isPrivate) { save(); renderHistory(); }
 
+                // Append actions to finished response
+                const actions = document.createElement('div');
+                actions.className = "msg-actions";
+                actions.innerHTML = `
+                    <div class="action-icon" title="Read Aloud" onclick="speakText(this, \`${fullText.replace(/`/g, "'").replace(/"/g, "&quot;")}\`)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                    </div>
+                    <div class="action-icon" title="Regenerate" onclick="regenerateLast()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
+                    </div>
+                `;
+                botDiv.appendChild(actions);
+
             } catch (err) {
-                botDiv.innerHTML = "<strong>CRITICAL ERROR:</strong> Neural link severed.";
+                botDiv.innerHTML = `<strong>CRITICAL ERROR:</strong> ${err.message}`;
             }
         }
-        function createNewChat() {
-            currentId = null;
-            location.reload(); 
-        }
 
-        function save() { localStorage.setItem('nova_legacy_v5', JSON.stringify(sessions)); }
-
-        function renderHistory() {
-            const list = document.getElementById('history-list');
-            list.innerHTML = sessions.map(s => `
-                <div class="history-item ${s.id === currentId ? 'active' : ''}" onclick="loadSession(${s.id})">
-                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; width:80%; font-weight:800;">${s.title.toUpperCase()}</span>
-                    <span onclick="event.stopPropagation(); deleteSess(${s.id})">✕</span>
-                </div>
-            `).join('');
-        }
-
-        function loadSession(id) {
-            currentId = id;
-            const s = sessions.find(x => x.id === id);
-            document.getElementById('chat-window').innerHTML = "";
-            s.messages.forEach(m => addMessage(m.content, m.role));
-            renderHistory();
-            if(window.innerWidth < 768) toggleSidebar();
-        }
-
-        function deleteSess(id) {
-            sessions = sessions.filter(s => s.id !== id);
-            save(); renderHistory();
-            if(currentId === id) createNewChat();
-        }
-
-        function clearAll() { if(confirm("Initiate total memory wipe?")) { localStorage.clear(); location.reload(); } }
-        function onGoogle(response) {
-
-    const data = JSON.parse(atob(response.credential.split('.')[1]));
-
-    localStorage.setItem("nova_profile", JSON.stringify(data));
-
-    showProfile(data);
-
-    toggleSettings();
-
-    addMessage(`Welcome back, ${data.name}!`, "assistant");
-}
-        function showProfile(user){
-
-    document.getElementById("google-login").style.display="none";
-    document.getElementById("google-profile").style.display="block";
-
-    document.getElementById("google-avatar").src=user.picture;
-    document.getElementById("google-name").textContent=user.name;
-}
-
+        // Inputs
         document.getElementById('user-input').addEventListener('keypress', e => e.key === 'Enter' && handleSend());
-        
-        // Drag-Drop Restoration
-        document.addEventListener('dragover', e => { e.preventDefault(); document.body.style.opacity = '0.7'; });
-        document.addEventListener('drop', e => {
-            e.preventDefault();
-            document.body.style.opacity = '1';
-            const file = e.dataTransfer.files[0];
-            if(file) handleFile({ target: { files: [file] } });
-        });
+        function handleFile(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+                fileObj = { name: file.name, content: ev.target.result };
+                const chip = document.getElementById('file-chip');
+                chip.style.display = 'block'; chip.textContent = `Attached: ${file.name}`;
+            };
+            reader.readAsText(file);
+        }
+        function handleMic() {
+            const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if(!Speech) return alert("System voice link not supported in this browser.");
+            const rec = new Speech();
+            const btn = document.getElementById('mic-trigger');
+            btn.style.color = "var(--accent)";
+            rec.start();
+            rec.onresult = e => { document.getElementById('user-input').value = e.results[0][0].transcript; btn.style.color = "white"; };
+            rec.onerror = () => btn.style.color = "white";
+        }
 
-        renderHistory();
-        const saved = localStorage.getItem("nova_profile");
+        // Google Auth
+        function onGoogle(response) {
+            const data = JSON.parse(atob(response.credential.split('.')[1]));
+            localStorage.setItem("nova_profile", JSON.stringify(data));
+            showProfile(data);
+            toggleSettings();
+            addMessage(`Welcome back, ${data.name}!`, "assistant");
+        }
+        function showProfile(user){
+            document.getElementById("google-login").style.display="none";
+            document.getElementById("google-profile").style.display="block";
+            document.getElementById("google-avatar").src=user.picture;
+            document.getElementById("google-name").textContent=user.name;
+        }
+        function logoutGoogle(){
+            localStorage.removeItem("nova_profile");
+            document.getElementById("google-profile").style.display="none";
+            document.getElementById("google-login").style.display="flex";
+        }
 
-if(saved){
-    showProfile(JSON.parse(saved));
-}
     </script>
 </body>
 </html>
