@@ -4,7 +4,22 @@
     <meta name="msvalidate.01" content="61609FC026D32C52F2F19267A3767D1E" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DarkNovaX</title>
+    <title>DarkNovaX — Free AI Chatbot with Image Generation & Web Search</title>
+    <meta name="description" content="DarkNovaX is a free AI chatbot that chats, generates images from text prompts, searches the web, and reads replies aloud — all in one glassmorphic, private-mode-enabled interface.">
+    <link rel="canonical" href="https://darknovax.ai/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://darknovax.ai/">
+    <meta property="og:title" content="DarkNovaX — Free AI Chatbot with Image Generation & Web Search">
+    <meta property="og:description" content="Chat, generate images, search the web, and hear replies read aloud — a free AI assistant with a glassmorphic interface and private mode.">
+    <meta property="og:image" content="https://darknovax.ai/og-image.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="DarkNovaX — Free AI Chatbot with Image Generation & Web Search">
+    <meta name="twitter:description" content="Chat, generate images, search the web, and hear replies read aloud — a free AI assistant with a glassmorphic interface and private mode.">
+    <meta name="twitter:image" content="https://darknovax.ai/og-image.png">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
@@ -81,6 +96,11 @@
             0% { transform: scale(0.5); opacity: 0; filter: blur(10px); } 
             100% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 15px white); } 
         }
+        #mic-trigger.recording { color: #ff3b30; animation: mic-pulse 1.2s ease-in-out infinite; }
+        @keyframes mic-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,59,48,0.5); }
+            50% { box-shadow: 0 0 0 8px rgba(255,59,48,0); }
+        }
 
         /* Skeleton Loader */
         .skeleton-box {
@@ -149,6 +169,7 @@
         .msg-user { 
             align-self: flex-end; background: var(--accent); color: #000; 
             border-bottom-right-radius: 6px; box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+            white-space: pre-wrap; word-break: break-word;
         }
         .msg-bot { 
             align-self: flex-start; border-bottom-left-radius: 6px;
@@ -404,25 +425,19 @@
             </div>
             
             <div class="setting-row">
-                <span>AI Persona</span>
-                <select id="persona-select" class="glass-select" onchange="saveSettings()">
-                    <option value="default">Default Assistant</option>
-                    <option value="coder">Expert Coder</option>
-                    <option value="creative">Creative Writer</option>
-                </select>
+                <span>Auto-read replies aloud</span>
+                <label class="switch"><input type="checkbox" id="sett-autospeak" onchange="saveSettings()"><span class="slider"></span></label>
             </div>
-            
             <div class="setting-row">
-                <span>Accent Color</span>
-                <div style="display:flex; gap:12px;">
-                    <div onclick="setAccent('#ffffff')" style="width:24px; height:24px; background:#fff; border-radius:50%; cursor:pointer; border:2px solid transparent;"></div>
-                    <div onclick="setAccent('#00e5ff')" style="width:24px; height:24px; background:#00e5ff; border-radius:50%; cursor:pointer;"></div>
-                    <div onclick="setAccent('#ff2d55')" style="width:24px; height:24px; background:#ff2d55; border-radius:50%; cursor:pointer;"></div>
-                    <div onclick="setAccent('#a855f7')" style="width:24px; height:24px; background:#a855f7; border-radius:50%; cursor:pointer;"></div>
-                </div>
+                <span>Send message with Enter</span>
+                <label class="switch"><input type="checkbox" id="sett-entersend" checked onchange="saveSettings()"><span class="slider"></span></label>
             </div>
-            <div class="setting-row"><span>Auto-Scroll</span><label class="switch"><input type="checkbox" id="sett-scroll" checked onchange="saveSettings()"><span class="slider"></span></label></div>
-            <button onclick="clearAll()" class="btn-danger" style="margin-top:10px;">Clear All Data & Memory</button>
+            <div class="setting-row">
+                <span>Web search shortcut ("search ...")</span>
+                <label class="switch"><input type="checkbox" id="sett-websearch" checked onchange="saveSettings()"><span class="slider"></span></label>
+            </div>
+            <button onclick="exportChat()" class="btn-primary" style="margin-top:5px;">Export Current Chat</button>
+            <button onclick="clearAll()" class="btn-danger">Clear All Data & Memory</button>
         </div>
     </div>
 
@@ -442,15 +457,43 @@
     <script>
         // Core State
         let sessions = JSON.parse(localStorage.getItem('nova_v6_sessions') || '[]');
-        let userSettings = JSON.parse(localStorage.getItem('nova_v6_settings') || '{"accent":"#ffffff", "scroll":true, "persona":"default"}');
+        let userSettings = JSON.parse(localStorage.getItem('nova_v6_settings') || '{"autoSpeak":false, "enterSend":true, "webSearch":true}');
         let currentId = null;
         let isPrivate = false;
         let fileObj = null;
         let privateMsgs = []; 
         let currentContext = []; // Active context sent to API
+        let recognition = null;
+        let isRecording = false;
 
+        // NOTE: This key is visible to anyone who views this page's source. For a real
+        // deployment, move this call behind your own backend/serverless proxy so the key
+        // is never shipped to the browser (see chat notes for details).
         const API_KEY = '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';
         const MODEL = 'openai/gpt-oss-20b:free';
+        const SYSTEM_PROMPT = "You are DarkNovaX, a helpful, direct AI assistant. When the user asks for code, ALWAYS return it inside a properly fenced Markdown code block with a language tag (e.g. ```javascript), never describe the code in prose instead of showing it, and never say a file is 'below' without actually including the fenced block in the same reply. Keep explanations concise and put code first when the user asks to build or write something.";
+
+        const WELCOME_HTML = `
+            <div id="welcome-screen" style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:20px; animation:fadeIn 0.6s;">
+                <div class="welcome-logo">
+                    <svg width="90" height="90" viewBox="0 0 150 150"><path fill="white" d="M59.95,93.59l45.05-33.3c2.21-1.63,5.37-1,6.42,1.54 5.54,13.37,3.06,29.44-7.96,40.48-11.02,11.03-26.35,13.45-40.37,7.94l-15.31,7.1c21.96,15.03,48.63,11.31,65.29-5.38 13.22-13.23,17.31-31.27,13.48-47.54l.03,.03c-5.55-23.9,1.36-33.45,15.53-52.98.33-.46,.67-.93,1.01-1.4l-18.64,18.66v-.06L59.94,93.6"/><path fill="white" d="M50.65,101.68c-15.76-15.07-13.04-38.4,.4-51.86 9.94-9.96,26.24-14.02,40.46-8.05l15.28-7.06c-2.75-1.99-6.28-4.13-10.33-5.64-18.29-7.54-40.2-3.79-55.07,11.09-14.3,14.32-18.8,36.34-11.08,55.13 5.77,14.04-3.69,23.98-13.22,34-3.38,3.55-6.76,7.11-9.49,10.87l43.03-38.48"/></svg>
+                </div>
+                <h1 style="font-weight:800; font-size:2.5rem; letter-spacing: -1px;">DarkNovaX</h1>
+                <p style="opacity: 0.7; font-size: 1.1rem; max-width: 500px;">Experience the next evolution of glassmorphism. I can now generate images, search the web, and read responses aloud.</p>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:15px; width:min(500px, 100%); margin-top:10px;">
+                    <button class="glass" onclick="fillPrompt('Generate an image of a futuristic neon city')" style="padding:15px; border-radius:16px; color:white; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; transition:0.3s;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <span>Generate Image</span>
+                    </button>
+                    <button class="glass" onclick="fillPrompt('Search for the latest news on space exploration')" style="padding:15px; border-radius:16px; color:white; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:10px; transition:0.3s;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        <span>Web Search</span>
+                    </button>
+                </div>
+            </div>`;
+        function showWelcomeScreen() {
+            document.getElementById('chat-window').innerHTML = WELCOME_HTML;
+        }
 
         // Init App
         window.addEventListener('load', () => {
@@ -560,19 +603,15 @@
                 } catch(e) {}
             }
         }
-        function setAccent(c) { 
-            document.documentElement.style.setProperty('--accent', c); 
-            userSettings.accent = c;
-            saveSettings();
-        }
         function applySettings() {
-            setAccent(userSettings.accent);
-            document.getElementById('sett-scroll').checked = userSettings.scroll;
-            document.getElementById('persona-select').value = userSettings.persona;
+            document.getElementById('sett-autospeak').checked = !!userSettings.autoSpeak;
+            document.getElementById('sett-entersend').checked = userSettings.enterSend !== false;
+            document.getElementById('sett-websearch').checked = userSettings.webSearch !== false;
         }
         function saveSettings() {
-            userSettings.scroll = document.getElementById('sett-scroll').checked;
-            userSettings.persona = document.getElementById('persona-select').value;
+            userSettings.autoSpeak = document.getElementById('sett-autospeak').checked;
+            userSettings.enterSend = document.getElementById('sett-entersend').checked;
+            userSettings.webSearch = document.getElementById('sett-websearch').checked;
             localStorage.setItem('nova_v6_settings', JSON.stringify(userSettings));
         }
 
@@ -617,7 +656,25 @@
         }
         function filterHistory() { renderHistory(document.getElementById('search-history').value); }
         function save() { localStorage.setItem('nova_v6_sessions', JSON.stringify(sessions)); }
-        function createNewChat() { currentId = null; location.reload(); }
+        function createNewChat() {
+            // Stop anything mid-flight, then reset to a blank conversation without reloading the page.
+            if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+            if (isRecording) stopMic();
+            currentId = null;
+            isPrivate = false;
+            currentContext = [];
+            privateMsgs = [];
+            const pi = document.getElementById('private-indicator');
+            pi.textContent = "InPrivate Chat";
+            pi.style.borderColor = "var(--glass-border)";
+            pi.style.color = "white";
+            document.getElementById('user-input').value = "";
+            fileObj = null;
+            document.getElementById('file-chip').style.display = 'none';
+            showWelcomeScreen();
+            renderHistory();
+            if (window.innerWidth < 768 && document.body.classList.contains('sidebar-open')) toggleSidebar();
+        }
         function loadSession(id) {
             isPrivate = false;
             document.getElementById('private-indicator').style.borderColor = "var(--glass-border)";
@@ -681,7 +738,7 @@
             }
             
             win.appendChild(div);
-            if(userSettings.scroll) win.scrollTop = win.scrollHeight;
+            win.scrollTop = win.scrollHeight;
             return div;
         }
 
@@ -725,8 +782,11 @@
             if(!text && !fileObj) return;
 
             let prompt = text;
-            if(fileObj) {
-                prompt = `[FILE: ${fileObj.name}]\n${fileObj.content}\n\nUSER: ${text}`;
+            let displayText = text;
+            const attachedFile = fileObj;
+            if(attachedFile) {
+                prompt = `[FILE: ${attachedFile.name}]\n${attachedFile.content}\n\nUSER: ${text || "Please analyze this file."}`;
+                displayText = `📎 ${attachedFile.name}${text ? '\n' + text : ''}`;
                 fileObj = null;
                 document.getElementById('file-chip').style.display = 'none';
             }
@@ -734,21 +794,17 @@
             // Initialization logic
             if (!isPrivate && !currentId) {
                 currentId = Date.now();
-                sessions.unshift({ id: currentId, title: text.slice(0, 30) || "New Session", messages: [] });
-                // Add persona system prompt
-                let sysPrompt = "You are DarkNovaX, an advanced AI.";
-                if(userSettings.persona === "coder") sysPrompt = "You are an expert, 10x developer. Always provide clean, efficient code.";
-                if(userSettings.persona === "creative") sysPrompt = "You are a creative writer. Use expressive language, metaphors, and vibrant descriptions.";
-                currentContext = [{ role: 'system', content: sysPrompt }];
+                sessions.unshift({ id: currentId, title: text.slice(0, 30) || (attachedFile ? attachedFile.name : "New Session"), messages: [] });
+                currentContext = [{ role: 'system', content: SYSTEM_PROMPT }];
             }
 
-            addMessage(text, 'user');
+            addMessage(displayText, 'user');
             input.value = "";
             currentContext.push({ role: 'user', content: prompt });
             
             // Sync to storage arrays
             let storageMsgs = isPrivate ? privateMsgs : sessions.find(s => s.id === currentId).messages;
-            storageMsgs.push({ role: 'user', content: prompt });
+            storageMsgs.push({ role: 'user', content: displayText });
 
             const botDiv = addMessage('', 'assistant');
             botDiv.innerHTML = `<div class="typing"><span></span><span></span><span></span></div>`;
@@ -775,6 +831,12 @@
                 const wrapEl = document.getElementById(wrapperId);
                 const paraEl = document.getElementById(`p-${seed}`);
 
+                // Placeholder saved immediately so the entry exists even if the tab closes mid-generation
+                let historyContent = `_Generating image for "${text}"..._`;
+                currentContext.push({ role: 'assistant', content: `[Image generated for: "${text}"]` });
+                storageMsgs.push({ role: 'assistant', content: historyContent });
+                const storedIndex = storageMsgs.length - 1;
+
                 if (imgEl) {
                     imgEl.onload = function() {
                         if (wrapEl) {
@@ -785,7 +847,18 @@
                         imgEl.style.display = 'block';
                         imgEl.onclick = () => openLightbox(imgEl.src);
                         if (paraEl) paraEl.textContent = 'Here is your image:';
-                        if (userSettings.scroll) document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
+                        document.getElementById("chat-window").scrollTop = document.getElementById("chat-window").scrollHeight;
+
+                        // Persist the real image so it's still there after a reload — this is the
+                        // fix for generated images disappearing on refresh. The image itself lives
+                        // on pollinations.ai's server; we just keep the link + markdown around.
+                        const finalContent = `Here is your image:\n\n![${text.replace(/[\[\]]/g, '')}](${imgUrl})`;
+                        if (!isPrivate) {
+                            storageMsgs[storedIndex].content = finalContent;
+                            save(); renderHistory();
+                        } else {
+                            storageMsgs[storedIndex].content = finalContent;
+                        }
                     };
                     imgEl.onerror = function() {
                         // Retry without extra params — simplest fallback
@@ -794,6 +867,8 @@
                             imgEl.src = `https://image.pollinations.ai/prompt/${imgPrompt}`;
                         } else {
                             botDiv.innerHTML = `<p style="opacity:0.7;">Could not generate image. Check your internet connection and try again.</p>`;
+                            storageMsgs[storedIndex].content = "Image generation failed.";
+                            if (!isPrivate) save();
                         }
                     };
                 }
@@ -810,12 +885,7 @@
                     </div>
                 `;
                 botDiv.appendChild(actions);
-                if (userSettings.scroll) document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
-
-                // Save text record to history
-                const historyContent = `[Image generated for: "${text}"]`;
-                currentContext.push({ role: 'assistant', content: historyContent });
-                storageMsgs.push({ role: 'assistant', content: historyContent });
+                document.getElementById("chat-window").scrollTop = document.getElementById("chat-window").scrollHeight;
                 if (!isPrivate) { save(); renderHistory(); }
 
                 return;
@@ -823,7 +893,7 @@
 
 
             // Feature: Web Search Interception
-            if(lower.startsWith("search ") || lower.startsWith("lookup ")) {
+            if(userSettings.webSearch !== false && (lower.startsWith("search ") || lower.startsWith("lookup "))) {
                 const query = text.replace(/^(search|lookup)\s+/i, '');
                 const searchRes = await performSearch(query);
                 botDiv.innerHTML = marked.parse(searchRes);
@@ -862,7 +932,7 @@
                             } catch(e){}
                         }
                     }
-                    if(userSettings.scroll) document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
+                    document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
                 }
 
                 currentContext.push({ role: 'assistant', content: fullText });
@@ -888,27 +958,103 @@
         }
 
         // Inputs
-        document.getElementById('user-input').addEventListener('keypress', e => e.key === 'Enter' && handleSend());
+        document.getElementById('user-input').addEventListener('keypress', e => {
+            if (e.key === 'Enter' && userSettings.enterSend !== false) handleSend();
+        });
+        const READABLE_EXT = ['.txt', '.md', '.csv', '.json', '.js', '.ts', '.py', '.html', '.css', '.xml', '.yml', '.yaml', '.log'];
+        const MAX_FILE_CHARS = 12000; // keep the prompt within a safe size for the model
+
         function handleFile(e) {
             const file = e.target.files[0];
-            if(!file) return;
+            e.target.value = ""; // allow re-selecting the same file later
+            if (!file) return;
+
+            const nameLower = file.name.toLowerCase();
+            const isTextType = (file.type && file.type.startsWith('text/')) || file.type === 'application/json';
+            const isReadableExt = READABLE_EXT.some(ext => nameLower.endsWith(ext));
+
+            if (!isTextType && !isReadableExt) {
+                alert(`"${file.name}" can't be read as text (e.g. images/PDFs aren't supported yet), so it won't be analyzed. Try a .txt, .md, .csv, .json or code file instead.`);
+                return;
+            }
+
             const reader = new FileReader();
+            const chip = document.getElementById('file-chip');
+            chip.style.display = 'block';
+            chip.textContent = `Reading ${file.name}...`;
+
             reader.onload = ev => {
-                fileObj = { name: file.name, content: ev.target.result };
-                const chip = document.getElementById('file-chip');
-                chip.style.display = 'block'; chip.textContent = `Attached: ${file.name}`;
+                let content = ev.target.result;
+                let truncated = false;
+                if (content.length > MAX_FILE_CHARS) {
+                    content = content.slice(0, MAX_FILE_CHARS);
+                    truncated = true;
+                }
+                fileObj = { name: file.name, content, truncated };
+                chip.textContent = `Attached: ${file.name}${truncated ? ' (truncated to fit)' : ''}`;
+            };
+            reader.onerror = () => {
+                alert(`Couldn't read "${file.name}".`);
+                chip.style.display = 'none';
+                fileObj = null;
             };
             reader.readAsText(file);
         }
+        // Voice input: dictates into the text box only — just like ChatGPT/Gemini's mic.
+        // It never sends the message for you; you still review and hit send yourself.
         function handleMic() {
+            if (isRecording) return stopMic();
+
             const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if(!Speech) return alert("System voice link not supported in this browser.");
-            const rec = new Speech();
+            if (!Speech) return alert("Voice input isn't supported in this browser. Try Chrome or Edge.");
+
+            recognition = new Speech();
+            recognition.lang = navigator.language || 'en-US';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
             const btn = document.getElementById('mic-trigger');
-            btn.style.color = "var(--accent)";
-            rec.start();
-            rec.onresult = e => { document.getElementById('user-input').value = e.results[0][0].transcript; btn.style.color = "white"; };
-            rec.onerror = () => btn.style.color = "white";
+            const input = document.getElementById('user-input');
+            const baseText = input.value ? input.value + ' ' : '';
+
+            recognition.onstart = () => {
+                isRecording = true;
+                btn.classList.add('recording');
+                btn.title = "Stop listening";
+            };
+
+            recognition.onresult = (e) => {
+                let interim = '', final = '';
+                for (let i = e.resultIndex; i < e.results.length; i++) {
+                    const chunk = e.results[i][0].transcript;
+                    if (e.results[i].isFinal) final += chunk;
+                    else interim += chunk;
+                }
+                if (final) {
+                    input.value = (baseTextAccum() + final).trim() + ' ';
+                    recognition._committed = (recognition._committed || '') + final;
+                } else {
+                    input.value = (baseTextAccum() + interim);
+                }
+            };
+
+            function baseTextAccum() {
+                return baseText + (recognition._committed || '');
+            }
+
+            recognition.onerror = () => stopMic();
+            recognition.onend = () => stopMic();
+
+            recognition.start();
+        }
+
+        function stopMic() {
+            isRecording = false;
+            const btn = document.getElementById('mic-trigger');
+            btn.classList.remove('recording');
+            btn.title = "Voice Input";
+            if (recognition) { try { recognition.stop(); } catch (e) {} }
+            recognition = null;
         }
 
         // Google Auth
