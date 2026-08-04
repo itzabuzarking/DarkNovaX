@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DarkNovaX</title>
-    <meta name="description" content="DarkNovaX is a free AI chatbot: chat naturally, turn text prompts into images, pull live web search results, and have replies read aloud — all in one private, glass-styled interface.">
+    <meta name="description" content="Chat With DarkNovaX, glass-styled interface.">
     <link rel="canonical" href="https://darknovax.vercel.app/">
 
     <!-- Open Graph / Facebook -->
@@ -17,7 +17,7 @@
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="DarkNovaX — Free AI Chatbot with Image Generation & Web Search">
+    <meta name="twitter:title" content="DarkNovaX">
     <meta name="twitter:description" content="Chat, generate images, search the web, and hear replies read aloud — a free AI assistant with a glassmorphic interface and private mode.">
     <meta name="twitter:image" content="https://darknovax.vercel.app/og-image.png">
     
@@ -1005,59 +1005,77 @@
         }
         // Voice input: dictates into the text box only — just like ChatGPT/Gemini's mic.
         // It never sends the message for you; you still review and hit send yourself.
+        let micManualStop = false;
+
         function handleMic() {
-            if (isRecording) return stopMic();
+            if (isRecording) { stopMic(); return; }
 
             const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!Speech) return alert("Voice input isn't supported in this browser. Try Chrome or Edge.");
 
-            recognition = new Speech();
-            recognition.lang = navigator.language || 'en-US';
-            recognition.continuous = true;
-            recognition.interimResults = true;
-
             const btn = document.getElementById('mic-trigger');
             const input = document.getElementById('user-input');
-            const baseText = input.value ? input.value + ' ' : '';
+            let committed = input.value ? input.value + ' ' : '';
+            micManualStop = false;
 
-            recognition.onstart = () => {
-                isRecording = true;
-                btn.classList.add('recording');
-                btn.title = "Stop listening";
+            const startRecognition = () => {
+                recognition = new Speech();
+                recognition.lang = navigator.language || 'en-US';
+                recognition.continuous = true;
+                recognition.interimResults = true;
+
+                recognition.onstart = () => {
+                    isRecording = true;
+                    btn.classList.add('recording');
+                    btn.title = "Stop listening";
+                };
+
+                recognition.onresult = (e) => {
+                    let interim = '';
+                    for (let i = e.resultIndex; i < e.results.length; i++) {
+                        const chunk = e.results[i][0].transcript;
+                        if (e.results[i].isFinal) committed += chunk + ' ';
+                        else interim += chunk;
+                    }
+                    input.value = committed + interim;
+                };
+
+                recognition.onerror = (e) => {
+                    // Real, unrecoverable errors: stop for good and tell the user why.
+                    if (e.error === 'not-allowed' || e.error === 'audio-capture' || e.error === 'service-not-allowed') {
+                        micManualStop = true;
+                        alert("Microphone access was blocked. Check this site's microphone permission in your browser settings.");
+                    }
+                    // Other errors (e.g. "no-speech" after a short pause) are normal —
+                    // onend fires right after and we just restart listening below.
+                };
+
+                recognition.onend = () => {
+                    if (micManualStop) {
+                        isRecording = false;
+                        btn.classList.remove('recording');
+                        btn.title = "Voice Input";
+                        recognition = null;
+                    } else {
+                        // Chrome stops the recognizer on its own after a few seconds of
+                        // silence even with continuous:true — restart it seamlessly so a
+                        // normal pause between sentences doesn't end the dictation.
+                        startRecognition();
+                    }
+                };
+
+                recognition.start();
             };
 
-            recognition.onresult = (e) => {
-                let interim = '', final = '';
-                for (let i = e.resultIndex; i < e.results.length; i++) {
-                    const chunk = e.results[i][0].transcript;
-                    if (e.results[i].isFinal) final += chunk;
-                    else interim += chunk;
-                }
-                if (final) {
-                    input.value = (baseTextAccum() + final).trim() + ' ';
-                    recognition._committed = (recognition._committed || '') + final;
-                } else {
-                    input.value = (baseTextAccum() + interim);
-                }
-            };
-
-            function baseTextAccum() {
-                return baseText + (recognition._committed || '');
-            }
-
-            recognition.onerror = () => stopMic();
-            recognition.onend = () => stopMic();
-
-            recognition.start();
+            startRecognition();
         }
 
         function stopMic() {
+            micManualStop = true;
+            if (recognition) { try { recognition.stop(); } catch (e) {} }
             isRecording = false;
             const btn = document.getElementById('mic-trigger');
-            btn.classList.remove('recording');
-            btn.title = "Voice Input";
-            if (recognition) { try { recognition.stop(); } catch (e) {} }
-            recognition = null;
+            if (btn) { btn.classList.remove('recording'); btn.title = "Voice Input"; }
         }
 
         // Google Auth
