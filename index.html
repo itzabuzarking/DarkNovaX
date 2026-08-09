@@ -822,7 +822,7 @@
             const blob = new Blob([content], { type: 'text/markdown' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url; a.download = `DarkNovaX_${s.title.replace(/\\s/g,'_')}.md`;
+            a.href = url; a.download = `DarkNovaX_${s.title.replace(/\s/g,'_')}.md`;
             a.click();
         }
 
@@ -952,8 +952,6 @@
             handleSend();
         }
 
-        // Web Search Tool
-
         // Main Send Logic
         async function handleSend() {
             const input = document.getElementById('user-input');
@@ -1069,232 +1067,91 @@
 
                 return;
             }
-// Real Web Search
-if (
-    lower.startsWith("search ") ||
-    lower.startsWith("lookup ")
-) {
-    const query = text
-        .replace(/^(search|lookup)\s+/i, "")
-        .trim();
 
-    if (!query) {
-        botDiv.textContent = "Please enter something to search for.";
-        return;
-    }
+            // Real Web Search
+            if (
+                lower.startsWith("search ") ||
+                lower.startsWith("lookup ")
+            ) {
+                const query = text
+                    .replace(/^(search|lookup)\s+/i, "")
+                    .trim();
 
-    try {
-        botDiv.innerHTML = `
-            <div class="typing-indicator">
-                Searching the web...
-            </div>
-        `;
+                if (!query) {
+                    botDiv.textContent = "Please enter something to search for.";
+                    return;
+                }
 
-        const results = await performWebSearch(query);
+                try {
+                    botDiv.innerHTML = `
+                        <div class="web-search-loading">
+                            <div class="web-search-dot"></div>
+                            <div class="web-search-dot"></div>
+                            <div class="web-search-dot"></div>
+                            <span>Searching the web...</span>
+                        </div>
+                    `;
 
-        if (!results.length) {
-            botDiv.textContent =
-                `No web results found for "${query}".`;
-            return;
-        }
+                    const results = await performWebSearch(query);
 
-        /* ================================
-   DARKNOVAX WEB SEARCH RESULTS
-================================ */
+                    if (!results.length) {
+                        botDiv.textContent =
+                            `No web results found for "${query}".`;
+                        return;
+                    }
 
-.web-results {
-    width: 100%;
-    max-width: 900px;
-    margin-top: 8px;
-}
+                    const resultsHtml = results.map((r, i) => {
+                        let domain = r.url;
+                        try { domain = new URL(r.url).hostname; } catch (e) {}
+                        return `
+                            <div class="web-result">
+                                <div class="web-result-top">
+                                    <div class="web-result-number">${i + 1}</div>
+                                    <div class="web-result-content">
+                                        <a class="web-result-title" href="${r.url}" target="_blank" rel="noopener noreferrer">${r.title || r.url}</a>
+                                        <div class="web-result-domain">${domain}</div>
+                                        <div class="web-result-description">${r.snippet || r.description || ''}</div>
+                                        <a class="web-result-open" href="${r.url}" target="_blank" rel="noopener noreferrer">Open ↗</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
 
-.web-results-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-}
+                    botDiv.innerHTML = `
+                        <div class="web-results">
+                            <div class="web-results-header">
+                                <div>
+                                    <div class="web-results-title">Results for "${query}"</div>
+                                    <div class="web-results-subtitle">${results.length} result${results.length === 1 ? '' : 's'} found</div>
+                                </div>
+                            </div>
+                            <div class="web-results-list">${resultsHtml}</div>
+                        </div>
+                    `;
 
-.web-results-title {
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: -0.2px;
-}
+                    const markdown = results.map((r, i) => `${i + 1}. [${r.title || r.url}](${r.url})\n   ${r.snippet || r.description || ''}`).join('\n\n');
 
-.web-results-subtitle {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    margin-top: 3px;
-}
+                    currentContext.push({ role: 'assistant', content: `[Web search results for "${query}"]\n${markdown}` });
+                    storageMsgs.push({
+                        role: "assistant",
+                        content: markdown
+                    });
 
-.web-results-list {
-    max-height: 520px;
-    overflow-y: auto;
-    padding-right: 8px;
-}
+                    if (!isPrivate) {
+                        save();
+                        renderHistory();
+                    }
 
-/* Black elegant scrollbar */
-.web-results-list::-webkit-scrollbar {
-    display: block;
-    width: 6px;
-}
+                } catch (error) {
+                    console.error("Web search error:", error);
 
-.web-results-list::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.45);
-    border-radius: 20px;
-}
+                    botDiv.textContent =
+                        "Web search failed. Please try again.";
+                }
 
-.web-results-list::-webkit-scrollbar-thumb {
-    background: #050505;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 20px;
-}
-
-.web-results-list::-webkit-scrollbar-thumb:hover {
-    background: #111111;
-}
-
-.web-results-list {
-    scrollbar-width: thin;
-    scrollbar-color: #050505 rgba(0,0,0,0.45);
-}
-
-.web-result {
-    position: relative;
-    padding: 17px;
-    margin-bottom: 10px;
-    border-radius: 17px;
-    background: rgba(5,5,8,0.58);
-    border: 1px solid rgba(255,255,255,0.07);
-    transition:
-        transform 0.25s var(--spring),
-        background 0.25s ease,
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
-}
-
-.web-result:hover {
-    transform: translateY(-2px);
-    background: rgba(12,12,18,0.82);
-    border-color: rgba(255,255,255,0.14);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.28);
-}
-
-.web-result-top {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-}
-
-.web-result-number {
-    min-width: 28px;
-    height: 28px;
-    display: grid;
-    place-items: center;
-    border-radius: 9px;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.08);
-    font-size: 0.78rem;
-    font-weight: 800;
-    color: rgba(255,255,255,0.8);
-}
-
-.web-result-content {
-    min-width: 0;
-    flex: 1;
-}
-
-.web-result-title {
-    color: #fff;
-    font-size: 0.96rem;
-    font-weight: 700;
-    line-height: 1.4;
-    text-decoration: none;
-}
-
-.web-result-title:hover {
-    text-decoration: underline;
-}
-
-.web-result-domain {
-    margin-top: 4px;
-    font-size: 0.72rem;
-    color: rgba(255,255,255,0.45);
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-.web-result-description {
-    margin-top: 10px;
-    color: rgba(255,255,255,0.68);
-    font-size: 0.84rem;
-    line-height: 1.55;
-}
-
-.web-result-open {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 12px;
-    padding: 7px 11px;
-    border-radius: 9px;
-    background: rgba(255,255,255,0.055);
-    border: 1px solid rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.8);
-    text-decoration: none;
-    font-size: 0.75rem;
-    transition: 0.2s ease;
-}
-
-.web-result-open:hover {
-    background: rgba(255,255,255,0.12);
-    color: white;
-}
-
-.web-search-loading {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--text-muted);
-    padding: 5px 0;
-}
-
-.web-search-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: white;
-    animation: typingBounce 1.2s infinite ease-in-out;
-}
-
-.web-search-dot:nth-child(2) {
-    animation-delay: .15s;
-}
-
-.web-search-dot:nth-child(3) {
-    animation-delay: .3s;
-}
-
-        storageMsgs.push({
-            role: "assistant",
-            content: markdown
-        });
-
-        if (!isPrivate) {
-            save();
-            renderHistory();
-        }
-
-    } catch (error) {
-        console.error("Web search error:", error);
-
-        botDiv.textContent =
-            "Web search failed. Please try again.";
-    }
-
-    return;
-}
+                return;
+            }
 
             // Standard API Call
             try {
