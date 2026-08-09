@@ -764,19 +764,6 @@
         }
 
         // Web Search Tool
-        async function performSearch(query) {
-            try {
-                const res = await fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`);
-                const data = await res.json();
-                if(data.query && data.query.search.length > 0) {
-                    const top = data.query.search.slice(0,3);
-                    return "Here is what I found on the web:\n\n" + top.map(r => `**${r.title}**: ${r.snippet.replace(/<[^>]+>/g, '')}`).join('\n\n');
-                }
-                return "I searched the web but couldn't find a good summary.";
-            } catch(e) {
-                return "Web search failed temporarily.";
-            }
-        }
 
         // Main Send Logic
         async function handleSend() {
@@ -893,18 +880,71 @@
 
                 return;
             }
+// Real Web Search
+if (
+    lower.startsWith("search ") ||
+    lower.startsWith("lookup ")
+) {
+    const query = text
+        .replace(/^(search|lookup)\s+/i, "")
+        .trim();
 
+    if (!query) {
+        botDiv.textContent = "Please enter something to search for.";
+        return;
+    }
 
-            // Feature: Web Search Interception
-            if(userSettings.webSearch !== false && (lower.startsWith("search ") || lower.startsWith("lookup "))) {
-                const query = text.replace(/^(search|lookup)\s+/i, '');
-                const searchRes = await performSearch(query);
-                botDiv.innerHTML = marked.parse(searchRes);
-                currentContext.push({ role: 'assistant', content: searchRes });
-                storageMsgs.push({ role: 'assistant', content: searchRes });
-                if(!isPrivate) { save(); renderHistory(); }
-                return;
-            }
+    try {
+        botDiv.innerHTML = `
+            <div class="typing-indicator">
+                Searching the web...
+            </div>
+        `;
+
+        const results = await performWebSearch(query);
+
+        if (!results.length) {
+            botDiv.textContent =
+                `No web results found for "${query}".`;
+            return;
+        }
+
+        const markdown = results.map((result, index) => {
+            return `
+### ${index + 1}. [${result.title}](${result.url})
+
+${result.content}
+
+[Open source](${result.url})
+`;
+        }).join("\n");
+
+        botDiv.innerHTML = marked.parse(markdown);
+
+        currentContext.push({
+            role: "assistant",
+            content: markdown
+        });
+
+        storageMsgs.push({
+            role: "assistant",
+            content: markdown
+        });
+
+        if (!isPrivate) {
+            save();
+            renderHistory();
+        }
+
+    } catch (error) {
+        console.error("Web search error:", error);
+
+        botDiv.textContent =
+            "Web search failed. Please try again.";
+    }
+
+    return;
+}
 
             // Standard API Call
             try {
@@ -1099,5 +1139,6 @@
         }
 
     </script>
+    <script src="search.js"></script>
 </body>
 </html>
