@@ -43,6 +43,63 @@
     <link rel="apple-touch-icon" href="/favicon-180.png">
 
     <style>
+        /* Better sizing */
+* {
+    box-sizing: border-box;
+}
+
+/* Prevent horizontal scrolling */
+html, body {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* Images */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Videos and iframes */
+iframe, video {
+    max-width: 100%;
+}
+
+/* Containers */
+.container,
+.chat-container,
+.sidebar,
+.main-content {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Mobile Fix */
+@media (max-width: 768px) {
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .chat-area {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .message {
+        max-width: 90%;
+        font-size: 14px;
+    }
+
+    .input-container {
+        width: 100%;
+        padding: 8px;
+    }
+
+    .welcome-screen {
+        padding: 15px;
+    }
+}
         header.glass {
     background: rgba(8, 0, 0, 0.62);
     border-bottom: 1px solid rgba(255, 30, 30, 0.14);
