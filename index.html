@@ -43,6 +43,30 @@
     <link rel="apple-touch-icon" href="/favicon-180.png">
 
     <style>
+        header.glass {
+    background: rgba(8, 0, 0, 0.62);
+    border-bottom: 1px solid rgba(255, 30, 30, 0.14);
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.35),
+        0 1px 0 rgba(255, 0, 0, 0.04);
+}
+ #welcome-screen .glass {
+    background: rgba(30, 0, 0, 0.32);
+    border: 1px solid rgba(255, 25, 25, 0.22);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.03),
+        0 8px 25px rgba(0,0,0,0.35);
+}
+
+#welcome-screen .glass:hover {
+    background: rgba(70, 0, 0, 0.42);
+    border-color: rgba(255, 25, 25, 0.75);
+
+    box-shadow:
+        0 0 25px rgba(255, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+}
         /* ================================
    DARKNOVAX WEB SEARCH RESULTS
 ================================ */
@@ -224,51 +248,120 @@
         *::-webkit-scrollbar { display: none; }
         * { -ms-overflow-style: none; scrollbar-width: none; box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
 
-        :root {
-            --bg-color1: #0a0a0f;
-            --bg-color2: #16102b;
-            --bg-color3: #0f172a;
-            --glass-bg: rgba(20, 20, 30, 0.4);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --accent: #ffffff;
-            --text: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.6);
-            --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-            --sidebar-width: 320px;
-        }
+       :root {
+    /* ================================
+       DARKNOVAX RED / BLACK THEME
+       ================================ */
 
-        body { 
-            background: linear-gradient(-45deg, var(--bg-color1), var(--bg-color2), var(--bg-color3)); 
-            background-size: 400% 400%; 
-            animation: gradientBG 15s ease infinite;
-            height: 100dvh; overflow: hidden; display: flex; color: var(--text);
-        }
+    --bg-color1: #000000;
+    --bg-color2: #050000;
+    --bg-color3: #080000;
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+    /* Transparent red glass */
+    --glass-bg: rgba(35, 0, 0, 0.38);
+    --glass-border: rgba(255, 30, 30, 0.18);
 
-        /* Abstract glowing orbs in background */
-        .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; z-index: -1; animation: floatOrb 20s infinite ease-in-out alternate; }
-        .orb-1 { width: 400px; height: 400px; background: #6366f1; top: -100px; left: -100px; }
-        .orb-2 { width: 500px; height: 500px; background: #ec4899; bottom: -200px; right: -100px; animation-delay: -5s; }
-        
+    --glass-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.65),
+        0 0 30px rgba(255, 0, 0, 0.04);
+
+    /* Main red accent */
+    --accent: #ff1717;
+    --accent-red: #ff1717;
+    --accent-red-soft: rgba(255, 23, 23, 0.18);
+
+    --text: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.6);
+
+    --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --sidebar-width: 320px;
+}
+
+body {
+    background: #000000;
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    color: var(--text);
+}
+
+/* No blue/pink animated gradient */
+@keyframes gradientBG {
+    0%, 100% {
+        background-position: 50% 50%;
+    }
+}
+
+/* =================================
+   RED AMBIENT GLASS GLOW
+   ================================= */
+
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.28;
+    z-index: -1;
+    animation: floatOrb 20s infinite ease-in-out alternate;
+    pointer-events: none;
+}
+
+.orb-1 {
+    width: 430px;
+    height: 430px;
+    background: #ff0000;
+    top: -140px;
+    left: -140px;
+}
+
+.orb-2 {
+    width: 520px;
+    height: 520px;
+    background: #ff0000;
+    bottom: -240px;
+    right: -140px;
+    animation-delay: -5s;
+}
+
+@keyframes floatOrb {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+        transform: translate(45px, 45px) scale(1.15);
+    }
+}        
         @keyframes floatOrb {
             0% { transform: translate(0, 0) scale(1); }
             100% { transform: translate(50px, 50px) scale(1.2); }
         }
 
-        /* Glassmorphism utility */
         .glass {
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow);
-        }
+    background: rgba(35, 0, 0, 0.38);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+
+    border: 1px solid rgba(255, 30, 30, 0.18);
+
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+    transition:
+        background 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.glass:hover {
+    background: rgba(55, 0, 0, 0.42);
+    border-color: rgba(255, 30, 30, 0.38);
+
+    box-shadow:
+        0 8px 35px rgba(0, 0, 0, 0.65),
+        0 0 25px rgba(255, 0, 0, 0.08);
+}
 
         /* SPLASH SCREEN - Now with Glassmorphism */
         #splash { 
