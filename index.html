@@ -605,6 +605,270 @@ body {
     color: #fff;
     font-weight: 800;
 }
+        /* =========================================================
+   DARKNOVAX FINAL UI OVERRIDES
+   BLACK + RED GLASS
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1. FORCE ALL NORMAL TEXT TO WHITE
+   --------------------------------------------------------- */
+
+body,
+main,
+header,
+button,
+input,
+textarea,
+select,
+label,
+p,
+span,
+div {
+    color: #ffffff;
+}
+
+/* Keep muted text slightly dim, but NEVER black */
+#user-input::placeholder,
+.search-bar::placeholder {
+    color: rgba(255, 255, 255, 0.60);
+}
+
+/* ---------------------------------------------------------
+   2. USER MESSAGES — WHITE TEXT
+   --------------------------------------------------------- */
+
+.msg-user {
+    background: rgba(35, 0, 0, 0.45);
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 20, 20, 0.45);
+    box-shadow: none;
+}
+
+/* ---------------------------------------------------------
+   3. BOT MESSAGES — WHITE TEXT
+   --------------------------------------------------------- */
+
+.msg-bot {
+    color: #ffffff !important;
+}
+
+/* ---------------------------------------------------------
+   4. SEND BUTTON — WHITE
+   --------------------------------------------------------- */
+
+.circle-btn {
+    background: #ffffff !important;
+    color: #000000 !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.9);
+
+    box-shadow: none !important;
+
+    transition: none !important;
+}
+
+/* Keep it WHITE when mouse is over it */
+.circle-btn:hover,
+.circle-btn:focus,
+.circle-btn:active {
+    background: #ffffff !important;
+    color: #000000 !important;
+
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* SVG inside send button */
+.circle-btn svg {
+    color: #000000 !important;
+    stroke: #000000 !important;
+}
+
+/* ---------------------------------------------------------
+   5. REMOVE HOVER COLOR CHANGES
+   --------------------------------------------------------- */
+
+/* Main buttons */
+button:hover,
+button:focus {
+    color: inherit;
+}
+
+/* Glass elements */
+.glass:hover {
+    background: var(--glass-bg) !important;
+    border-color: var(--glass-border) !important;
+}
+
+/* History items */
+.history-item:hover {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-color: transparent !important;
+    transform: none !important;
+}
+
+/* Action buttons */
+.action-icon:hover {
+    background: rgba(255, 255, 255, 0.10) !important;
+    color: #ffffff !important;
+    transform: none !important;
+}
+
+/* Header/icon buttons */
+.icon-btn:hover {
+    background: transparent !important;
+    color: #ffffff !important;
+    opacity: 0.6 !important;
+}
+
+/* Copy button */
+.copy-btn:hover {
+    color: #ffffff !important;
+}
+
+/* Image hover */
+.msg img:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Lightbox button */
+.lightbox-btn:hover {
+    background: rgba(255, 255, 255, 0.10) !important;
+    transform: none !important;
+}
+
+/* Primary buttons */
+.btn-primary:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* ---------------------------------------------------------
+   6. VISIBLE BLACK CHAT PAGE SLIDER / SCROLLBAR
+   --------------------------------------------------------- */
+
+/* Allow scrollbar to actually exist */
+#chat-window {
+    overflow-y: scroll !important;
+
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: #050505 rgba(0, 0, 0, 0.65);
+}
+
+/* Chrome / Edge / Chromium */
+#chat-window::-webkit-scrollbar {
+    display: block !important;
+    width: 9px;
+}
+
+/* Black scrollbar track */
+#chat-window::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.70);
+    border-radius: 20px;
+}
+
+/* Black scrollbar handle */
+#chat-window::-webkit-scrollbar-thumb {
+    background: #050505;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    min-height: 45px;
+}
+
+/* DO NOT change color when mouse is over slider */
+#chat-window::-webkit-scrollbar-thumb:hover {
+    background: #050505 !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* ---------------------------------------------------------
+   7. ALSO GIVE WEB SEARCH RESULTS A BLACK SLIDER
+   --------------------------------------------------------- */
+
+.web-results-list {
+    scrollbar-width: thin;
+    scrollbar-color: #050505 rgba(0, 0, 0, 0.65);
+}
+
+.web-results-list::-webkit-scrollbar {
+    display: block !important;
+    width: 8px;
+}
+
+.web-results-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.70);
+    border-radius: 20px;
+}
+
+.web-results-list::-webkit-scrollbar-thumb {
+    background: #050505 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+}
+
+.web-results-list::-webkit-scrollbar-thumb:hover {
+    background: #050505 !important;
+}
+
+/* ---------------------------------------------------------
+   8. SIDEBAR SLIDER
+   --------------------------------------------------------- */
+
+#history-list {
+    scrollbar-width: thin;
+    scrollbar-color: #050505 rgba(0, 0, 0, 0.65);
+}
+
+#history-list::-webkit-scrollbar {
+    display: block !important;
+    width: 8px;
+}
+
+#history-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.70);
+}
+
+#history-list::-webkit-scrollbar-thumb {
+    background: #050505 !important;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 20px;
+}
+
+#history-list::-webkit-scrollbar-thumb:hover {
+    background: #050505 !important;
+}
+
+/* ---------------------------------------------------------
+   9. INPUT TEXT
+   --------------------------------------------------------- */
+
+#user-input {
+    color: #ffffff !important;
+}
+
+#user-input::placeholder {
+    color: rgba(255, 255, 255, 0.60) !important;
+}
+
+/* ---------------------------------------------------------
+   10. KEEP DARKNOVAX LOGO WHITE
+   --------------------------------------------------------- */
+
+.splash-logo,
+.logo svg,
+.logo,
+header svg {
+    color: #ffffff;
+}
+
+/* Don't let generic hover rules recolor the logo */
+.logo:hover,
+.logo svg:hover {
+    color: #ffffff !important;
+}
     </style>
 </head>
 <body class="sidebar-closed">
