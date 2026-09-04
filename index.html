@@ -1311,9 +1311,7 @@ header svg {
         let recognition = null;
         let isRecording = false;
 
-        // NOTE: This key is visible to anyone who views this page's source. For a real
-        // deployment, move this call behind your own backend/serverless proxy so the key
-        // is never shipped to the browser (see chat notes for details).
+        // Client-side key: intentionally visible because this project uses direct browser-to-OpenRouter requests.
         const API_KEY = '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';
         const MODEL = 'inclusionai/ling-3.0-flash-fin:free';
         const SYSTEM_PROMPT = "You are DarkNovaX, a helpful, direct AI assistant. When the user asks for code, ALWAYS return it inside a properly fenced Markdown code block with a language tag (e.g. ```javascript), never describe the code in prose instead of showing it, and never say a file is 'below' without actually including the fenced block in the same reply. Keep explanations concise and put code first when the user asks to build or write something.";
@@ -1806,44 +1804,126 @@ header svg {
                 return;
             }
 
-            // Standard API Call
+            // Standard OpenRouter API Call
             try {
-                const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${API_KEY}`, "Content-Type": "application/json", "HTTP-Referer": "https://darknovax.vercel.app" },
-                    body: JSON.stringify({ model: MODEL, messages: currentContext, stream: true })
-                });
-
-                if(!res.ok) throw new Error((await res.json()).error.message || "API Error");
-
-                const reader = res.body.getReader();
-                const decoder = new TextDecoder();
-                let fullText = "";
-                botDiv.innerHTML = "";
-
-                while(true) {
-                    const { done, value } = await reader.read();
-                    if(done) break;
-                    const lines = decoder.decode(value).split('\n');
-                    for(const line of lines) {
-                        if(line.startsWith('data: ')) {
-                            const data = line.slice(6).trim();
-                            if(data === '[DONE]') continue;
-                            try {
-                                fullText += JSON.parse(data).choices[0].delta.content || "";
-                                botDiv.innerHTML = marked.parse(fullText);
-                            } catch(e){}
-                        }
-                    }
-                    document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
+                if (typeof API_KEY !== "string" || !API_KEY.trim()) {
+                    throw new Error("OpenRouter API key is missing.");
                 }
 
-                currentContext.push({ role: 'assistant', content: fullText });
-                storageMsgs.push({ role: 'assistant', content: fullText });
-                if(!isPrivate) { save(); renderHistory(); }
+                const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${API_KEY.trim()}`,
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": window.location.origin,
+                        "X-Title": "DarkNovaX"
+                    },
+                    body: JSON.stringify({
+                        model: MODEL,
+                        messages: currentContext,
+                        stream: true
+                    })
+                });
+
+                // Read the error body before throwing. This gives the real OpenRouter
+                // error instead of the generic "Failed to fetch".
+                if (!res.ok) {
+                    let errorText = "";
+                    try {
+                        const errorData = await res.json();
+                        errorText =
+                            errorData?.error?.message ||
+                            errorData?.message ||
+                            errorData?.error ||
+                            "";
+                    } catch (_) {
+                        try { errorText = await res.text(); } catch (_) {}
+                    }
+
+                    throw new Error(
+                        `OpenRouter ${res.status}${errorText ? `: ${errorText}` : ""}`
+                    );
+                }
+
+                if (!res.body) {
+                    throw new Error("OpenRouter returned an empty response.");
+                }
+
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                let fullText = "";
+                let buffer = "";
+
+                botDiv.innerHTML = "";
+
+                const processSSELine = (line) => {
+                    line = line.trim();
+                    if (!line || !line.startsWith("data:")) return;
+
+                    const data = line.slice(5).trim();
+                    if (!data || data === "[DONE]") return;
+
+                    let json;
+                    try {
+                        json = JSON.parse(data);
+                    } catch (_) {
+                        // Incomplete JSON is handled by the buffer in the read loop.
+                        return;
+                    }
+
+                    if (json.error) {
+                        throw new Error(
+                            json.error.message ||
+                            json.error.code ||
+                            "OpenRouter returned an error."
+                        );
+                    }
+
+                    const delta = json?.choices?.[0]?.delta?.content;
+                    if (typeof delta === "string" && delta) {
+                        fullText += delta;
+                        botDiv.innerHTML = marked.parse(fullText);
+                    }
+                };
+
+                while (true) {
+                    const { done, value } = await reader.read();
+
+                    if (done) {
+                        buffer += decoder.decode();
+                        break;
+                    }
+
+                    buffer += decoder.decode(value, { stream: true });
+
+                    const lines = buffer.split(/\r?\n/);
+                    buffer = lines.pop() || "";
+
+                    for (const line of lines) {
+                        processSSELine(line);
+                    }
+
+                    const chatWindow = document.getElementById("chat-window");
+                    if (chatWindow) {
+                        chatWindow.scrollTop = chatWindow.scrollHeight;
+                    }
+                }
+
+                // Process the final buffered SSE line, if any.
+                if (buffer.trim()) {
+                    processSSELine(buffer);
+                }
+
+                if (!fullText.trim()) {
+                    throw new Error("OpenRouter returned no text. The selected model may be unavailable.");
+                }
+
+                currentContext.push({ role: "assistant", content: fullText });
+                storageMsgs.push({ role: "assistant", content: fullText });
+                if (!isPrivate) { save(); renderHistory(); }
 
                 // Append actions to finished response
-                const actions = document.createElement('div');
+                const actions = document.createElement("div");
                 actions.className = "msg-actions";
                 actions.innerHTML = `
                     <div class="action-icon" title="Read Aloud" onclick="speakText(this, \`${fullText.replace(/`/g, "'").replace(/"/g, "&quot;")}\`)">
@@ -1856,7 +1936,16 @@ header svg {
                 botDiv.appendChild(actions);
 
             } catch (err) {
-                botDiv.innerHTML = `<strong>CRITICAL ERROR:</strong> ${err.message}`;
+                console.error("DarkNovaX OpenRouter error:", err);
+
+                const message = err?.message || "Unknown error";
+                let hint = "";
+
+                if (/failed to fetch|networkerror|load failed/i.test(message)) {
+                    hint = "<br><small>Check your internet connection, browser extensions, or whether the browser is blocking the OpenRouter request.</small>";
+                }
+
+                botDiv.innerHTML = `<strong>AI ERROR:</strong> ${message}${hint}`;
             }
         }
 
